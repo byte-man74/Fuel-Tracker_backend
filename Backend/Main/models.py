@@ -5,9 +5,10 @@ from django.db import models
 
 class Fueling_station(models.Model):
     name = models.CharField(max_length=50)
-    logo = models.ImageField(upload_to="Fueling_station_Image_directory")
+    logo = models.ImageField(
+        upload_to="Fueling_station_Image_directory", null=True)
     background_image = models.ImageField(
-        upload_to="Fueling_station_Image_directory")
+        upload_to="Fueling_station_Image_directory", null=True)
     # todo Create a signal to create the fields for all the extra's here
 
     def __str__(self):
@@ -18,7 +19,7 @@ class Fuel_Station_Price (models.Model):
     amount = models.BigIntegerField(null=True)
     votes = models.IntegerField(default=0)
     # ! find out the model that changes this field on edit of the model class
-    last_updated = models.DateTimeField(auto_now=False, auto_now_add=False)
+    last_updated = models.DateTimeField(auto_now=True, auto_now_add=False)
     station = models.OneToOneField(
         "Main.Fueling_station", on_delete=models.CASCADE)
 

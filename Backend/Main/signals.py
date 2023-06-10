@@ -6,18 +6,11 @@ from django.dispatch import receiver
 @receiver(post_save, sender=Fueling_station)
 def save_fuel_station_related_information(sender, instance, created, **kwargs):
     if created:
-        Fuel_Station_Extra_Information_instance = Fuel_Station_Extra_Information.objects.get_or_create(
+        Fuel_Station_Extra_Information.objects.get_or_create(
             station=instance)
-        Fuel_Station_Position_instance = Fuel_Station_Position.objects.get_or_create(
+        Fuel_Station_Position.objects.get_or_create(
             station=instance)
-        Fuel_Station_Price_instance = Fuel_Station_Price.objects.get_or_create(
+        Fuel_Station_Price.objects.get_or_create(
             station=instance)
-        Fuel_Station_Traffic_Rating_instance = Fuel_Station_Traffic_Rating.objects.get_or_create(
+        Fuel_Station_Traffic_Rating.objects.get_or_create(
             station=instance)
-
-
-        #? Save all instances created
-        Fuel_Station_Extra_Information_instance.save()
-        Fuel_Station_Position_instance.save()
-        Fuel_Station_Price_instance.save()
-        Fuel_Station_Traffic_Rating_instance.save()
