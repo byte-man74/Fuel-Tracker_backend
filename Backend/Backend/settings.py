@@ -1,14 +1,10 @@
 
 from pathlib import Path
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c_r6)e634dxl09@%cu@+rj%ud)5a(e&!rt_2)olr$ddnl715r!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -113,3 +109,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'Auth.CustomUser'
+AUTHENTICATION_BACKENDS = ['Auth.auth_backend.EmailBackend']
