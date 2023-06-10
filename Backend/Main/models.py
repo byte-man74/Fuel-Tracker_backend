@@ -25,10 +25,12 @@ class Fuel_Station_Price (models.Model):
 
     def get_formatted_amount(self):
         formatted_amount = "{:,}".format(self.amount)
-        return formatted_amount
+        formatted_amount_with_symbol = f'₦{formatted_amount}'
+        return formatted_amount_with_symbol
 
     #!find a way of grabbing the fuel station and representing it in a name here
     def __str__(self):
+        
         return self.name
 
 
