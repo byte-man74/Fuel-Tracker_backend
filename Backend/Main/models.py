@@ -17,7 +17,7 @@ class Fueling_station(models.Model):
 
 
 class Fuel_Station_Price (models.Model):
-    amount = models.BigIntegerField(null=True)
+    amount = models.BigIntegerField(null=True, default=0)
     votes = models.IntegerField(default=0)
     # ! find out the model that changes this field on edit of the model class
     last_updated = models.DateTimeField(auto_now=True, auto_now_add=False)
