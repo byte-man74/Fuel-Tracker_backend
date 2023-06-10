@@ -110,5 +110,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+#Authentication settings 
 AUTH_USER_MODEL = 'Auth.CustomUser'
 AUTHENTICATION_BACKENDS = ['Auth.auth_backend.EmailBackend']
+
+
+#Django rest settings
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+
