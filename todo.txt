@@ -1,3 +1,4 @@
-- Authentication 
+- database modelling ✅
+- Authentication ✅
 - DRF configuration
 - Cache 
