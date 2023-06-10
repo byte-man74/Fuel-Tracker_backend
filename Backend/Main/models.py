@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -30,8 +31,10 @@ class Fuel_Station_Price (models.Model):
 
     #!find a way of grabbing the fuel station and representing it in a name here
     def __str__(self):
+        Fuel_station_instance = self.station
+        Fuel_station_name = Fuel_station_instance.name
         
-        return self.name
+        return f"{Fuel_station_name} price object"
 
 
 class Fuel_Station_Traffic_Rating (models.Model):
@@ -41,12 +44,11 @@ class Fuel_Station_Traffic_Rating (models.Model):
     station = models.OneToOneField(
         "Main.Fueling_station", on_delete=models.CASCADE)
 
-    #!find a way of grabbing the fuel station and representing it in a name here
     def __str__(self):
-        return self.name
+        Fuel_station_instance = self.station
+        Fuel_station_name = Fuel_station_instance.name
 
-    # todo find a way of returning the percentages of the number of votes
-
+        return f"{Fuel_station_name} traffic object"
 
 class Fuel_Station_Position (models.Model):
     longitude = models.CharField(max_length=200, null=True)
@@ -54,10 +56,11 @@ class Fuel_Station_Position (models.Model):
     station = models.OneToOneField(
         "Main.Fueling_station", on_delete=models.CASCADE)
 
-    #!find a way of grabbing the fuel station and representing it in a name here
     def __str__(self):
-        return self.name
+        Fuel_station_instance = self.station
+        Fuel_station_name = Fuel_station_instance.name
 
+        return f"{Fuel_station_name} position object"
 
 class Fuel_Station_Extra_Information (models.Model):
     number_of_votes_for_fuel_station_being_open = models.IntegerField(
@@ -67,6 +70,9 @@ class Fuel_Station_Extra_Information (models.Model):
     station = models.OneToOneField(
         "Main.Fueling_station", on_delete=models.CASCADE)
 
-    #!find a way of grabbing the fuel station and representing it in a name here
+
     def __str__(self):
-        return self.name
+        Fuel_station_instance = self.station
+        Fuel_station_name = Fuel_station_instance.name
+
+        return f"{Fuel_station_name} extra informtion object"
