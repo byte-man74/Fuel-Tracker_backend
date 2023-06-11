@@ -10,6 +10,7 @@ class Fueling_station(models.Model):
         upload_to="Fueling_station_Image_directory", null=True)
     background_image = models.ImageField(
         upload_to="Fueling_station_Image_directory", null=True)
+    local_goverment = models.CharField( max_length=50)
     # todo Create a signal to create the fields for all the extra's here
 
     def __str__(self):

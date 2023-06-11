@@ -1,6 +1,7 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from .models import UserLocation
 
 from .models import CustomUser
 
@@ -28,3 +29,4 @@ class EmailUserAdmin(UserAdmin):
 
 
 admin.site.register(CustomUser, EmailUserAdmin)
+admin.site.register(UserLocation)

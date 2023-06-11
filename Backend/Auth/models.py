@@ -36,7 +36,6 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(verbose_name='email address', unique=True)
-
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
@@ -44,3 +43,12 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class UserLocation (models.Model):
+    state = models.CharField( max_length=50, null=True)
+    local_government = models.CharField( max_length=50, null=True)
+    user = models.OneToOneField("Auth.CustomUser", on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f'{self.user.email} Location profile'
