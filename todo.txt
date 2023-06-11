@@ -2,3 +2,4 @@
 - Authentication ✅
 - DRF configuration
 - Cache 
+- Queue
