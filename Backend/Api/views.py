@@ -19,3 +19,11 @@ class RegisterView(APIView):
 
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
+
+
+
+
+
+#Get the list of all the fueling station close to 500m for the user (recent changes and updates of the prices on the top)
+#get the paginated list of all the fueling station around the location. 
+#search the fueling station by name and filter by state
