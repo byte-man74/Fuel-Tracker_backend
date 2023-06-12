@@ -16,5 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 #!  would check this out someother time
 class FuelStationSerializer(serializers.ModelSerializer):
-    model = Fueling_station
-    pass
+    class Meta:
+        model = Fueling_station
+        fields = '__all__'
