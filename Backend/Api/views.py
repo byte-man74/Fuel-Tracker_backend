@@ -31,6 +31,7 @@ class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 class GetNearbyFuelingStation(APIView):
+
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ['field1', 'field2']
