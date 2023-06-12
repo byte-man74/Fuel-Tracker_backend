@@ -12,39 +12,43 @@ from Auth.models import UserLocation
 class RegisterView(APIView):
     http_method_names = ['post']
 
-    def post(self, *args, **kwargs):
-        serializer = UserSerializer(data=self.request.data)
+    def post(self, request, *args, **kwargs):
+        serializer = UserSerializer(data=request.data)
 
-        #? Here this is just saving the user's information if its valid
         if serializer.is_valid():
-            get_user_model().objects.create_user(**serializer.validated_data)
+            self.create_user(serializer.validated_data)
             return Response(status=HTTP_201_CREATED)
-        
-        #? Firing a function for when the user's information is invalid
-        else:
-            return Response(status=HTTP_400_BAD_REQUEST, data={'errors': serializer.errors})
+
+        return self.invalid_user_response(serializer.errors)
+
+    def create_user(self, validated_data):
+        get_user_model().objects.create_user(**validated_data)
+
+    def invalid_user_response(self, errors):
+        return Response(status=HTTP_400_BAD_REQUEST, data={'errors': errors})
     
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 #todo 'Add pagination to this end point'
 #todo 'Add search functionalty to this end point'
-class GetNearbyFuelingStation (APIView):
+class GetNearbyFuelingStation(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, *args, **kwargs):
-        serializer = FuelStationSerializer
-        #? Mock
-        '''serializer = bar_graph_serializer(instance=data, many=True)'''
+    def get(self, request, *args, **kwargs):
+        serializer = FuelStationSerializer()
 
-        #? Get user's current onboarding location
-        user = self.request.user()
-        user_location = UserLocation.objects.select_related('user').get(user=user)
+        # Get user's current onboarding location
+        user = request.user
+        user_location = UserLocation.objects.select_related(
+            'user').get(user=user)
 
-        Fueling_station.objects.filter(
-            local_goverment=user_location.local_goverment)
+        fueling_stations = Fueling_station.objects.filter(
+            local_government=user_location.local_government)
 
-        return Response(status=HTTP_200_OK, data={'fueling_station': serializer.errors})
+        serialized_stations = serializer(fueling_stations, many=True).data
+
+        return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_stations})
 
 
 
