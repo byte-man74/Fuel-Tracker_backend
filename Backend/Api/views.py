@@ -24,12 +24,8 @@ class RegisterView(APIView):
         else:
             return Response(status=HTTP_400_BAD_REQUEST, data={'errors': serializer.errors})
     
-
-
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
-
-
 
 #todo 'Add pagination to this end point'
 #todo 'Add search functionalty to this end point'
