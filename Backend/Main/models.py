@@ -10,7 +10,7 @@ class Fueling_station(models.Model):
         upload_to="Fueling_station_Image_directory", null=True)
     background_image = models.ImageField(
         upload_to="Fueling_station_Image_directory", null=True)
-    local_goverment = models.CharField( max_length=50)
+    local_government = models.CharField( max_length=50)
 
     def __str__(self):
         return self.name
