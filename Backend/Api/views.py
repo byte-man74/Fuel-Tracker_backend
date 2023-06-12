@@ -30,6 +30,8 @@ class RegisterView(APIView):
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
+
+'''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
 class GetNearbyFuelingStation(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -38,6 +40,7 @@ class GetNearbyFuelingStation(APIView):
 
     def get(self, request, *args, **kwargs):
         serializer = FuelStationSerializer()
+        search_query = request.query_params.get('search')
 
         # Get user's current onboarding location
         user = request.user
@@ -46,10 +49,16 @@ class GetNearbyFuelingStation(APIView):
 
         fueling_stations = Fueling_station.objects.filter(
             local_government=user_location.local_government)
-        
+
+        # Filter fueling stations within the range of the user's location
+        if search_query:
+            fueling_stations = fueling_stations.filter(
+                name__icontains=search_query)
+
         serializer = FuelStationSerializer(fueling_stations, many=True)
         serialized_data = serializer.data
 
         return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_data})
 
-
+class ViewFuelingStationInformation (APIView):
+    pass
