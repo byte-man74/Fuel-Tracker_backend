@@ -53,8 +53,3 @@ class GetNearbyFuelingStation(APIView):
         return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_data})
 
 
-
-
-#Get the list of all the fueling station close to 500m for the user (recent changes and updates of the prices on the top)
-#get the paginated list of all the fueling station around the location. 
-#search the fueling station by name and filter by state
