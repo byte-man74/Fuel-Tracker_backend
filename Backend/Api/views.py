@@ -39,7 +39,6 @@ class GetNearbyFuelingStation(APIView):
 
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['field1', 'field2']
 
     def get(self, request, *args, **kwargs):
         serializer = FuelStationSerializer()
