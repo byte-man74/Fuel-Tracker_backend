@@ -9,6 +9,7 @@ from Main.models import Fueling_station
 from Auth.models import UserLocation
 from rest_framework import filters
 
+'''The RegisterView is responsible for user creation account and onboarding of user '''
 class RegisterView(APIView):
     http_method_names = ['post']
 
@@ -27,11 +28,13 @@ class RegisterView(APIView):
     def invalid_user_response(self, errors):
         return Response(status=HTTP_400_BAD_REQUEST, data={'errors': errors})
     
+'''This is responsible for the login functionality of the api'''
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
+#todo Would pass the longitude and latitude of the station
 class GetNearbyFuelingStation(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -59,6 +62,8 @@ class GetNearbyFuelingStation(APIView):
         serialized_data = serializer.data
 
         return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_data})
+    
 
 class ViewFuelingStationInformation (APIView):
     pass
+    #pass the fueling station name, deliver the image, deliver the logo
