@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework.views import APIView
 from .serializers import UserSerializer, TokenObtainPairSerializer, FuelStationSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -48,8 +48,7 @@ class GetNearbyFuelingStation (APIView):
         Fueling_station.objects.filter(
             local_goverment=user_location.local_goverment)
 
-        #! Fix this 
-        return Response(status=HTTP, data={'fueling_station': serializer.errors})
+        return Response(status=HTTP_200_OK, data={'fueling_station': serializer.errors})
 
 
 
