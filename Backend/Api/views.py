@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from Main.models import Fueling_station
 from Auth.models import UserLocation
-
+from rest_framework import filters
 
 class RegisterView(APIView):
     http_method_names = ['post']
@@ -30,10 +30,10 @@ class RegisterView(APIView):
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
-#todo 'Add pagination to this end point'
-#todo 'Add search functionalty to this end point'
 class GetNearbyFuelingStation(APIView):
     permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['field1', 'field2']
 
     def get(self, request, *args, **kwargs):
         serializer = FuelStationSerializer()
