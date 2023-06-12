@@ -46,10 +46,11 @@ class GetNearbyFuelingStation(APIView):
 
         fueling_stations = Fueling_station.objects.filter(
             local_government=user_location.local_government)
+        
+        serializer = FuelStationSerializer(fueling_stations, many=True)
+        serialized_data = serializer.data
 
-        serialized_stations = serializer(fueling_stations, many=True).data
-
-        return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_stations})
+        return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_data})
 
 
 
