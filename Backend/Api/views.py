@@ -5,11 +5,15 @@ from rest_framework.views import APIView
 from .serializers import UserSerializer, TokenObtainPairSerializer, FuelStationSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
-from Main.models import Fueling_station
+from Main.models import Fueling_station, Fuel_Station_Price, Fuel_Station_Traffic_Rating, Fuel_Station_Position, Fuel_Station_Extra_Information
 from Auth.models import UserLocation
 from rest_framework import filters
+from rest_framework.exceptions import NotFound
+
 
 '''The RegisterView is responsible for user creation account and onboarding of user '''
+
+
 class RegisterView(APIView):
     http_method_names = ['post']
 
@@ -27,14 +31,19 @@ class RegisterView(APIView):
 
     def invalid_user_response(self, errors):
         return Response(status=HTTP_400_BAD_REQUEST, data={'errors': errors})
-    
+
+
 '''This is responsible for the login functionality of the api'''
+
+
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
-#todo Would pass the longitude and latitude of the station
+# todo Would pass the longitude and latitude of the station
+
+
 class GetNearbyFuelingStation(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -61,8 +70,24 @@ class GetNearbyFuelingStation(APIView):
         serialized_data = serializer.data
 
         return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_data})
-    
+
 
 class ViewFuelingStationInformation (APIView):
-    pass
-    #pass the fueling station name, deliver the image, deliver the logo
+    def get(self, request, fuel_station_id):
+        try:
+            station = Fueling_station.objects.get(id=fuel_station_id)
+        except Fueling_station.DoesNotExist:
+            raise NotFound("Fueling station does not exist.")
+
+        price = Fuel_Station_Price.objects.select_related(
+            'station').get(station=station)
+        traffic_rating = Fuel_Station_Traffic_Rating.objects.select_related(
+            'station').get(station=station)
+        position = Fuel_Station_Position.objects.select_related(
+            'station').get(station=station)
+        extra_information = Fuel_Station_Extra_Information.objects.select_related(
+            'station').get(station=station)
+
+    # get the station model
+
+    # pass the fueling station name, deliver the image, deliver the logo
