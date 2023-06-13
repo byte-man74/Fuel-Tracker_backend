@@ -39,3 +39,9 @@ class FuelStationExtraInformationSerializer(serializers.ModelSerializer):
         model = Fuel_Station_Extra_Information
         fields = ('number_of_votes_for_fuel_station_being_open',
                   'number_of_votes_for_fuel_station_being_close')
+
+
+class FuelStationPositionSerializer (serializers.Serializer):
+    class Meta:
+        model = Fuel_Station_Position
+        fields = ('longitude', 'latitude')

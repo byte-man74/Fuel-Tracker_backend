@@ -2,18 +2,22 @@ from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework.views import APIView
-from .serializers import UserSerializer, TokenObtainPairSerializer, FuelStationSerializer, FuelStationPriceSerializer, FuelStationTrafficRatingSerializer, FuelStationExtraInformationSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from Main.models import Fueling_station, Fuel_Station_Price, Fuel_Station_Traffic_Rating, Fuel_Station_Position, Fuel_Station_Extra_Information
 from Auth.models import UserLocation
 from rest_framework import filters
 from rest_framework.exceptions import NotFound
+from .serializers import (UserSerializer,
+                          TokenObtainPairSerializer,
+                          FuelStationSerializer,
+                          FuelStationPriceSerializer,
+                          FuelStationTrafficRatingSerializer,
+                          FuelStationExtraInformationSerializer,
+                          FuelStationPositionSerializer)
 
 
 '''The RegisterView is responsible for user creation account and onboarding of user '''
-
-
 class RegisterView(APIView):
     http_method_names = ['post']
 
@@ -34,16 +38,12 @@ class RegisterView(APIView):
 
 
 '''This is responsible for the login functionality of the api'''
-
-
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
 # todo Would pass the longitude and latitude of the station
-
-
 class GetNearbyFuelingStation(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -69,10 +69,22 @@ class GetNearbyFuelingStation(APIView):
         serializer = FuelStationSerializer(fueling_stations, many=True)
         serialized_data = serializer.data
 
-        return Response(status=HTTP_200_OK, data={'fueling_stations': serialized_data})
+        fuel_stations_with_location = []
+
+        for data in serialized_data:
+            station = Fueling_station.objects.get(id=data['id'])
+            position = Fuel_Station_Position.objects.select_related(
+                'station').get(station=station)
+            fuel_station_with_location = {
+                'station': data, 'position': FuelStationPositionSerializer(position).data}
+            fuel_stations_with_location.append(fuel_station_with_location)
+
+
+        return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_station_with_location})
 
 
 class ViewFuelingStationInformation (APIView):
+    #todo ......add a cache checker herre for performance
     def get(self, request, fuel_station_id):
         try:
             station = Fueling_station.objects.get(id=fuel_station_id)
@@ -95,6 +107,10 @@ class ViewFuelingStationInformation (APIView):
         }
 
         return Response(serialized_data)
-    # get the station model
 
-    # pass the fueling station name, deliver the image, deliver the logo
+class EditPriceGetOptions (APIView):
+    #? search cache key for ID
+    #? if ID exists ....... do something
+    #? else......create an id and set a ttl
+    #? send a "no vote response to server
+    pass
