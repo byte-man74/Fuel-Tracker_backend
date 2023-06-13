@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework.views import APIView
-from .serializers import UserSerializer, TokenObtainPairSerializer, FuelStationSerializer
+from .serializers import UserSerializer, TokenObtainPairSerializer, FuelStationSerializer, FuelStationPriceSerializer, FuelStationTrafficRatingSerializer, FuelStationExtraInformationSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from Main.models import Fueling_station, Fuel_Station_Price, Fuel_Station_Traffic_Rating, Fuel_Station_Position, Fuel_Station_Extra_Information
@@ -83,11 +83,18 @@ class ViewFuelingStationInformation (APIView):
             'station').get(station=station)
         traffic_rating = Fuel_Station_Traffic_Rating.objects.select_related(
             'station').get(station=station)
-        position = Fuel_Station_Position.objects.select_related(
-            'station').get(station=station)
         extra_information = Fuel_Station_Extra_Information.objects.select_related(
             'station').get(station=station)
 
+        # Create a dictionary to hold the serialized data
+        serialized_data = {
+            'station': FuelStationSerializer(station).data,
+            'price': FuelStationPriceSerializer(price).data,
+            'traffic_rating': FuelStationTrafficRatingSerializer(traffic_rating).data,
+            'extra_information': FuelStationExtraInformationSerializer(extra_information).data,
+        }
+
+        return Response(serialized_data)
     # get the station model
 
     # pass the fueling station name, deliver the image, deliver the logo
