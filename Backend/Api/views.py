@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from Auth.models import UserLocation
-from Api.helper_functions.views_functions import return_fuel_station_cache_key
 from rest_framework import filters
 from .serializers import (UserSerializer,
                           TokenObtainPairSerializer,
@@ -116,16 +116,25 @@ class ViewFuelingStationInformation (APIView):
 
 
 class EditPriceGetOptions(APIView):
-    validation_if_cache_exists = False
+    no_option_dictionary = {"details": "no options"}
+
+    @staticmethod
+    def return_fuel_station_cache_key(id):
+        try:
+            station = Fueling_station.objects.only('name').get(id=id)
+            # Generate a cache-safe key by removing invalid characters
+            safe_name = "".join(c for c in station.name if c.isalnum())
+            return f"{safe_name}_ID_{id}_cache_key"
+        except Fueling_station.DoesNotExist:
+            # Handle the case when the fuel station with the given ID doesn't exist
+            raise ValueError("Fuel station does not exist")
 
     def get(self, request, fuel_station_id):
         # get cache key for the fuel station
-        station_cache_key = return_fuel_station_cache_key(fuel_station_id)
+        station_cache_key = self.return_fuel_station_cache_key(fuel_station_id)
 
-        try:
-            # Check if the cache exists for the fuel station
-            cache.get(station_cache_key)
-            print("Yes, cache exists")  # Print message if cache exists
-        except station_cache_key.DoesNotExist:
-            # Print message if cache doesn't exist
-            print("Cache doesn't exist")
+        options = cache.get(station_cache_key)
+        if options is not None:
+            return Response(data={'options': options}, status=status.HTTP_200_OK)
+        else:
+            return Response(data=self.no_option_dictionary, status=status.HTTP_204_NO_CONTENT)
