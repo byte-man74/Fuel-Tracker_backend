@@ -4,10 +4,8 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_2
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
-from Main.models import Fueling_station, Fuel_Station_Price, Fuel_Station_Traffic_Rating, Fuel_Station_Position, Fuel_Station_Extra_Information
 from Auth.models import UserLocation
 from rest_framework import filters
-from rest_framework.exceptions import NotFound
 from .serializers import (UserSerializer,
                           TokenObtainPairSerializer,
                           FuelStationSerializer,
@@ -15,7 +13,12 @@ from .serializers import (UserSerializer,
                           FuelStationTrafficRatingSerializer,
                           FuelStationExtraInformationSerializer,
                           FuelStationPositionSerializer)
-
+from rest_framework.exceptions import NotFound
+from Main.models import (Fueling_station, 
+                         Fuel_Station_Price, 
+                         Fuel_Station_Traffic_Rating, 
+                         Fuel_Station_Position, 
+                         Fuel_Station_Extra_Information)
 
 '''The RegisterView is responsible for user creation account and onboarding of user '''
 class RegisterView(APIView):
