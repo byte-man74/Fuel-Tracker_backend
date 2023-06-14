@@ -78,6 +78,13 @@ DATABASES = {
     }
 }
 
+#caches
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://default:PEAKCFJA9wkQqIz1Mdqb@containers-us-west-18.railway.app:5816",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
