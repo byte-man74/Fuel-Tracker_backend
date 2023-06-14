@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from Auth.models import UserLocation
+from Api.helper_functions.views_functions import return_fuel_station_cache_key
 from rest_framework import filters
 from .serializers import (UserSerializer,
                           TokenObtainPairSerializer,
@@ -19,6 +20,8 @@ from Main.models import (Fueling_station,
                          Fuel_Station_Traffic_Rating, 
                          Fuel_Station_Position, 
                          Fuel_Station_Extra_Information)
+from django.core.cache import cache
+
 
 '''The RegisterView is responsible for user creation account and onboarding of user '''
 class RegisterView(APIView):
@@ -111,9 +114,18 @@ class ViewFuelingStationInformation (APIView):
 
         return Response(serialized_data)
 
-class EditPriceGetOptions (APIView):
-    #? search cache key for ID
-    #? if ID exists ....... do something
-    #? else......create an id and set a ttl
-    #? send a "no vote response to server
-    pass
+
+class EditPriceGetOptions(APIView):
+    validation_if_cache_exists = False
+
+    def get(self, request, fuel_station_id):
+        # get cache key for the fuel station
+        station_cache_key = return_fuel_station_cache_key(fuel_station_id)
+
+        try:
+            # Check if the cache exists for the fuel station
+            cache.get(station_cache_key)
+            print("Yes, cache exists")  # Print message if cache exists
+        except station_cache_key.DoesNotExist:
+            # Print message if cache doesn't exist
+            print("Cache doesn't exist")
