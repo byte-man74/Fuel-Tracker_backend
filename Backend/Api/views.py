@@ -4,6 +4,10 @@ from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_2
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
+                                                  check_if_vote_key_exists,
+                                                  check_vote_status,
+                                                  check_cache_key_for_fuel_station_id_and_process_request)
 from rest_framework.permissions import IsAuthenticated
 from Auth.models import UserLocation
 from rest_framework import filters
@@ -15,15 +19,17 @@ from .serializers import (UserSerializer,
                           FuelStationExtraInformationSerializer,
                           FuelStationPositionSerializer)
 from rest_framework.exceptions import NotFound
-from Main.models import (Fueling_station, 
-                         Fuel_Station_Price, 
-                         Fuel_Station_Traffic_Rating, 
-                         Fuel_Station_Position, 
+from Main.models import (Fueling_station,
+                         Fuel_Station_Price,
+                         Fuel_Station_Traffic_Rating,
+                         Fuel_Station_Position,
                          Fuel_Station_Extra_Information)
 from django.core.cache import cache
 
 
 '''The RegisterView is responsible for user creation account and onboarding of user '''
+
+
 class RegisterView(APIView):
     http_method_names = ['post']
 
@@ -44,12 +50,16 @@ class RegisterView(APIView):
 
 
 '''This is responsible for the login functionality of the api'''
+
+
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
 # todo Would pass the longitude and latitude of the station
+
+
 class GetNearbyFuelingStation(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -85,12 +95,13 @@ class GetNearbyFuelingStation(APIView):
                 'station': data, 'position': FuelStationPositionSerializer(position).data}
             fuel_stations_with_location.append(fuel_station_with_location)
 
-
         return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_station_with_location})
 
 
+'''The RegisterView is responsible for user creation account and onboarding of user '''
+
 class ViewFuelingStationInformation (APIView):
-    #todo ......add a cache checker herre for performance
+    # todo ......add a cache checker herre for performance
     def get(self, request, fuel_station_id):
         try:
             station = Fueling_station.objects.get(id=fuel_station_id)
@@ -118,23 +129,33 @@ class ViewFuelingStationInformation (APIView):
 class EditPriceGetOptions(APIView):
     no_option_dictionary = {"details": "no options"}
 
-    @staticmethod
-    def return_fuel_station_cache_key(id):
-        try:
-            station = Fueling_station.objects.only('name').get(id=id)
-            # Generate a cache-safe key by removing invalid characters
-            safe_name = "".join(c for c in station.name if c.isalnum())
-            return f"{safe_name}_ID_{id}_cache_key"
-        except Fueling_station.DoesNotExist:
-            # Handle the case when the fuel station with the given ID doesn't exist
-            raise ValueError("Fuel station does not exist")
-
     def get(self, request, fuel_station_id):
         # get cache key for the fuel station
-        station_cache_key = self.return_fuel_station_cache_key(fuel_station_id)
+        station_cache_key = return_fuel_station_cache_key(fuel_station_id)
 
         options = cache.get(station_cache_key)
         if options is not None:
             return Response(data={'options': options}, status=status.HTTP_200_OK)
         else:
             return Response(data=self.no_option_dictionary, status=status.HTTP_204_NO_CONTENT)
+
+    def post(self, request, fuel_station_id):
+        data = request.data
+        vote_validation = check_if_vote_key_exists(data)
+
+        if not vote_validation:
+            raise ValueError("Vote key 'value' does not exist in the data.")
+
+        vote_status = check_vote_status(True)
+
+        if vote_status:
+            check_cache_key_for_fuel_station_id_and_process_request(
+                fuel_station_id)
+            # act on the cache
+        else:
+            do_another_thing()
+
+
+# todo
+# api view for change password
+# api view for edit account
