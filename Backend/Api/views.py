@@ -98,7 +98,8 @@ class GetNearbyFuelingStation(APIView):
         return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_station_with_location})
 
 
-'''The RegisterView is responsible for user creation account and onboarding of user '''
+'''The ViewFuelingStationInformation is responsible for users to easily check the database and see a particular information relating to the fuel station they are interested in'''
+
 
 class ViewFuelingStationInformation (APIView):
     # todo ......add a cache checker herre for performance
@@ -126,6 +127,9 @@ class ViewFuelingStationInformation (APIView):
         return Response(serialized_data)
 
 
+''''''
+
+
 class EditPriceGetOptions(APIView):
     no_option_dictionary = {"details": "no options"}
 
@@ -141,7 +145,7 @@ class EditPriceGetOptions(APIView):
 
     def post(self, request, fuel_station_id):
         data = request.data
-        vote_validation = check_if_vote_key_exists(data)
+        vote_validation = check_if_vote_key_exists(fuel_station_id)
 
         if not vote_validation:
             raise ValueError("Vote key 'value' does not exist in the data.")
@@ -150,12 +154,14 @@ class EditPriceGetOptions(APIView):
 
         if vote_status:
             check_cache_key_for_fuel_station_id_and_process_request(
-                fuel_station_id)
+                data, fuel_station_id)
             # act on the cache
         else:
-            do_another_thing()
-
+            pass
 
 # todo
 # api view for change password
 # api view for edit account
+# api to async add number of votes on the approved price
+
+# {{'vote": true, 'price': 300}}
