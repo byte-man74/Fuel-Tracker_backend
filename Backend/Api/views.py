@@ -5,6 +5,7 @@ from Auth.models import CustomUser
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework import status
 from rest_framework.views import APIView
+from Main.tasks import update_votes
 from rest_framework_simplejwt.views import TokenObtainPairView
 from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
                                                   check_if_vote_key_exists,
@@ -214,9 +215,12 @@ class EditPriceGetOptions(APIView):
                 return Response(status=status.HTTP_200_OK)
 
 
+class VoteFuelStationPriceView(APIView):
+    def post(self, request, fuel_station_id):
+        update_votes.delay(fuel_station_id)
+        return Response({'message': 'Vote added successfully'}, status=status.HTTP_200_OK)
+
 # todo
-# api view for change password
-# api view for edit account
 # api to async add number of votes on the approved price
 
 # {{'vote": true, 'price': 300}}
