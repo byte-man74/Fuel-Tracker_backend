@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 # Create your models here.
 
@@ -19,7 +19,7 @@ class Fueling_station(models.Model):
 class Fuel_Station_Price (models.Model):
     amount = models.BigIntegerField(null=True, default=0)
     votes = models.IntegerField(default=0)
-    last_updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+    last_updated = models.DateTimeField(auto_now=True)
     station = models.OneToOneField(
         "Main.Fueling_station", on_delete=models.CASCADE)
 
@@ -33,6 +33,10 @@ class Fuel_Station_Price (models.Model):
         Fuel_station_name = Fuel_station_instance.name
         
         return f"{Fuel_station_name} price object"
+    
+    def save(self, *args, **kwargs):
+        self.last_updated = timezone.now()
+        super().save(*args, **kwargs)
 
 
 class Fuel_Station_Traffic_Rating (models.Model):
