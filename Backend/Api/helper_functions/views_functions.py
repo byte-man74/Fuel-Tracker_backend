@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 
 
-@staticmethod
 def return_fuel_station_cache_key(id):
     try:
         station = Fueling_station.objects.only('name').get(id=id)
@@ -45,13 +44,14 @@ def find_key_by_value(cache_object, price_value):
     return None
 
 
-def process_vote_request(price_value, cache_object, station_cache_key):
+def process_vote_request(price_value, cache_object, station_cache_key, data):
     cache_key = find_key_by_value(cache_object, price_value)
     if cache_key is not None:
         cache_object[cache_key]['votes'] += 1
         cache.set(station_cache_key, cache_object)
         return Response(status=status.HTTP_200_OK)
-    # Add extra processing here for when the vote is above a certain number
+    else_function(station_cache_key, data)
+
 
 
 def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_id):
@@ -63,7 +63,7 @@ def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_i
         price_value = data.get('price')
 
         if price_value is not None:
-            process_vote_request(price_value, cache_object, station_cache_key)
+            process_vote_request(price_value, cache_object, station_cache_key, data)
             return
 
     else_function(station_cache_key, data)
@@ -92,6 +92,8 @@ def else_function(station_cache_key, data):
 
 def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_cache_key):
     if num_keys >= 4:
+        processed_cache_object = delete_least_engaged_object(cache_object)
+        cache.set(station_cache_key, processed_cache_object)
         return Response(status=status.HTTP_200_OK)
     else:
         cache_object[generate_random_text(7)] = {
@@ -103,3 +105,36 @@ def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_
         return Response(status=status.HTTP_200_OK)
 
 # Your remaining code...
+
+
+def process_request_on_cache(data, cache_objects):
+    delete_least_engaged_object(cache_objects)
+
+
+def find_least_engaged_object(cache_object):
+    least_votes = float('inf')
+    oldest_datetime = datetime.now()
+    least_engaged_key = None
+
+    for key, value in cache_object.items():
+        votes = value['votes']
+        datetime_initialized = value['time_initialized']
+
+        if votes < least_votes or (votes == least_votes and datetime_initialized < oldest_datetime):
+            least_votes = votes
+            oldest_datetime = datetime_initialized
+            least_engaged_key = key
+
+    return least_engaged_key
+
+
+def delete_least_engaged_object(cache_object):
+     
+    if cache_object is not None:
+        least_engaged_key = find_least_engaged_object(cache_object)
+        if least_engaged_key is not None:
+            del cache_object[least_engaged_key]
+            return cache_object
+            
+
+
