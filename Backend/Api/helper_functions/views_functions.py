@@ -6,6 +6,7 @@ from rest_framework import status
 from django.core.cache import cache
 from django.http import HttpResponse
 from rest_framework.response import Response
+from Main.tasks import update_db
 
 
 def return_fuel_station_cache_key(id):
@@ -28,6 +29,23 @@ def generate_random_text(length):
     return random_text
 
 
+def get_fuel_station_id_from_cache_key(station_cache_key):
+    # Split the cache key by "_ID_" to separate the fuel station name and id
+    parts = station_cache_key.split("_ID_")
+
+    # Ensure the cache key is in the expected format
+    if len(parts) == 2:
+        # The fuel station id will be the second part of the split
+        fuel_station_id = parts[1].split("_")[0]
+        print(fuel_station_id)
+        return fuel_station_id
+        
+
+    # Return None if the cache key is not in the expected format
+    return None
+
+
+
 def check_if_vote_key_exists(data):
     return 'vote' in data
 
@@ -43,14 +61,23 @@ def find_key_by_value(cache_object, price_value):
     return None
 
 
+def update_db_from_cache(cache_dictionary, station_cache_id):
+    fuel_station_id = get_fuel_station_id_from_cache_key(station_cache_id)
+    update_db.delay(cache_dictionary, fuel_station_id)
+    cache.delete(station_cache_id)
+
+
+
 def process_vote_request(price_value, cache_object, station_cache_key, data):
     cache_key = find_key_by_value(cache_object, price_value)
     if cache_key is not None:
         cache_object[cache_key]['votes'] += 1
         #todo fire a function here
-
-        cache.set(station_cache_key, cache_object, int(
-            timedelta(hours=1.5).total_seconds()))
+        if cache_object[cache_key]['votes'] >= 4:
+            update_db_from_cache(cache_object[cache_key], station_cache_key)
+        else:
+            cache.set(station_cache_key, cache_object, int(
+                timedelta(hours=1.5).total_seconds()))
         return Response(status=status.HTTP_200_OK)
     else:
         else_function(station_cache_key, data)
