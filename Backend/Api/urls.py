@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import (EmailTokenObtainPairView, RegisterView, GetNearbyFuelingStation,
-                    ViewFuelingStationInformation, EditPriceGetOptions, ChangePasswordView, EditAccountInfoView, VoteFuelStationPriceView)
+                    ViewFuelingStationInformation, EditPriceGetOptions, ChangePasswordView, EditAccountInfoView, VoteFuelStationPriceView, UpdateTrafficRatingCountView)
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
@@ -19,5 +19,7 @@ urlpatterns = [
     path('edit_price/get_options/<int:fuel_station_id>/',
          EditPriceGetOptions.as_view(), name="edit-price-get-options"),
     path('add_votes/<int:fuel_station_id>/',
-         VoteFuelStationPriceView.as_view(), name='add_vote')
+         VoteFuelStationPriceView.as_view(), name='add_vote'),
+    path('traffic_rating/<int:fuel_station_id>/',
+         UpdateTrafficRatingCountView.as_view(), name='traffic_rating')
 ]
