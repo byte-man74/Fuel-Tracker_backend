@@ -7,7 +7,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
                                                   check_if_vote_key_exists,
                                                   check_vote_status,
-                                                  check_cache_key_for_fuel_station_id_and_process_request)
+                                                  check_cache_key_for_fuel_station_id_and_process_request,
+                                                  else_function)
 from rest_framework.permissions import IsAuthenticated
 from Auth.models import UserLocation
 from rest_framework import filters
@@ -137,27 +138,29 @@ class EditPriceGetOptions(APIView):
         # get cache key for the fuel station
         station_cache_key = return_fuel_station_cache_key(fuel_station_id)
 
-        options = cache.get(station_cache_key)
-        if options is not None:
-            return Response(data={'options': options}, status=status.HTTP_200_OK)
+        cache_object = cache.get(station_cache_key)
+        if cache_object is not None:
+            return Response(data={'cache_object': cache_object}, status=status.HTTP_200_OK)
         else:
             return Response(data=self.no_option_dictionary, status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, fuel_station_id):
+        station_cache_key = return_fuel_station_cache_key(fuel_station_id)
         data = request.data
-        vote_validation = check_if_vote_key_exists(fuel_station_id)
+        vote_validation = check_if_vote_key_exists(data)
 
         if not vote_validation:
             raise ValueError("Vote key 'value' does not exist in the data.")
 
-        vote_status = check_vote_status(True)
+        vote_status = check_vote_status(data)
 
         if vote_status:
+            print(' status was true')
             check_cache_key_for_fuel_station_id_and_process_request(
                 data, fuel_station_id)
             # act on the cache
         else:
-            pass
+            else_function(station_cache_key, data)
 
 # todo
 # api view for change password
