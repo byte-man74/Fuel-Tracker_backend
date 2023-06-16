@@ -47,6 +47,8 @@ def process_vote_request(price_value, cache_object, station_cache_key, data):
     cache_key = find_key_by_value(cache_object, price_value)
     if cache_key is not None:
         cache_object[cache_key]['votes'] += 1
+        #todo fire a function here
+
         cache.set(station_cache_key, cache_object, int(
             timedelta(hours=1.5).total_seconds()))
         return Response(status=status.HTTP_200_OK)
