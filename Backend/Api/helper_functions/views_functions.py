@@ -92,7 +92,7 @@ def else_function(station_cache_key, data):
 
 def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_cache_key):
     if num_keys >= 4:
-        processed_cache_object = delete_least_engaged_object(cache_object)
+        processed_cache_object = process_request_on_cache(data, cache_object)
         cache.set(station_cache_key, processed_cache_object)
         return Response(status=status.HTTP_200_OK)
     else:
@@ -108,7 +108,13 @@ def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_
 
 
 def process_request_on_cache(data, cache_objects):
-    delete_least_engaged_object(cache_objects)
+    cache_object = delete_least_engaged_object(cache_objects)
+    cache_object[generate_random_text(7)] = {
+        "price": data['price'],
+        "votes": 1,
+        "time_initialized": datetime.now()
+    }
+    return cache_object
 
 
 def find_least_engaged_object(cache_object):
