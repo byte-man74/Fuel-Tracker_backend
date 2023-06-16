@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from Main.tasks import update_db
 
 
+
+'''Helper functions'''
 def return_fuel_station_cache_key(id):
     try:
         station = Fueling_station.objects.only('name').get(id=id)
@@ -60,6 +62,36 @@ def find_key_by_value(cache_object, price_value):
             return key
     return None
 
+
+def find_least_engaged_object(cache_object):
+    least_votes = float('inf')
+    oldest_datetime = datetime.now()
+    least_engaged_key = None
+
+    for key, value in cache_object.items():
+        votes = value['votes']
+        datetime_initialized = value['time_initialized']
+
+        if votes < least_votes or (votes == least_votes and datetime_initialized < oldest_datetime):
+            least_votes = votes
+            oldest_datetime = datetime_initialized
+            least_engaged_key = key
+
+    return least_engaged_key
+
+
+def delete_least_engaged_object(cache_object):
+    if cache_object is not None:
+        least_engaged_key = find_least_engaged_object(cache_object)
+        if least_engaged_key is not None:
+            del cache_object[least_engaged_key]
+            return cache_object
+
+
+'''Helper functions end'''
+
+
+'''Operations'''
 
 def update_db_from_cache(cache_dictionary, station_cache_id):
     fuel_station_id = get_fuel_station_id_from_cache_key(station_cache_id)
@@ -150,27 +182,4 @@ def process_request_on_cache(data, cache_objects):
     return cache_object
 
 
-def find_least_engaged_object(cache_object):
-    least_votes = float('inf')
-    oldest_datetime = datetime.now()
-    least_engaged_key = None
-
-    for key, value in cache_object.items():
-        votes = value['votes']
-        datetime_initialized = value['time_initialized']
-
-        if votes < least_votes or (votes == least_votes and datetime_initialized < oldest_datetime):
-            least_votes = votes
-            oldest_datetime = datetime_initialized
-            least_engaged_key = key
-
-    return least_engaged_key
-
-
-def delete_least_engaged_object(cache_object):
-    if cache_object is not None:
-        least_engaged_key = find_least_engaged_object(cache_object)
-        if least_engaged_key is not None:
-            del cache_object[least_engaged_key]
-            return cache_object
-
+'''Operations end'''
