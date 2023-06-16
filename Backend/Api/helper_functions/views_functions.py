@@ -6,6 +6,7 @@ from datetime import datetime
 from rest_framework.response import Response
 from rest_framework import status
 
+
 @staticmethod
 def return_fuel_station_cache_key(id):
     try:
@@ -27,7 +28,6 @@ def generate_random_text(length):
     return random_text
 
 
-# Generate a random text of length 10
 def check_if_vote_key_exists(data):
     return 'vote' in data
 
@@ -36,26 +36,19 @@ def check_vote_status(status):
     return status
 
 
-def find_key_by_value(cache_object,  price_value):
-    print(cache_object)
-
+def find_key_by_value(cache_object, price_value):
     for key, value in cache_object.items():
         if value['price'] == price_value:
-            print("Key:", key)
-            print("Value:", value)
             return key
-            
+    return None
+
 
 def process_vote_request(price_value, cache_object):
-    print('we are here')
     cache_key = find_key_by_value(cache_object, price_value)
-    print('cahche keyy')
-    print(cache_key)
     if cache_key is not None:
-        print('safe')
         cache_object[cache_key]['votes'] += 1
         return Response(status=status.HTTP_200_OK)
-    # todo add extra processing here for if the vote is above a certain number
+    # Add extra processing here for when the vote is above a certain number
 
 
 def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_id):
@@ -63,14 +56,13 @@ def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_i
 
     cache_object = cache.get(station_cache_key)
     if cache_object is not None:
-        price_value = data['price']  # Access price value from data dictionary
+        # Access price value from data dictionary
+        price_value = data.get('price')
 
-        # Check if price_value exists in cache_object keys
         if price_value is not None:
             process_vote_request(price_value, cache_object)
             return
 
-    # Call else_function if cache_object is None or price_value not found
     else_function(station_cache_key, data)
 
 
@@ -83,7 +75,7 @@ def else_function(station_cache_key, data):
             num_keys, data, cache_object, station_cache_key)
 
     else:
-        # create cache
+        # Create cache
         cache_instance = {
             generate_random_text(7): {
                 "price": data['price'],
@@ -91,7 +83,7 @@ def else_function(station_cache_key, data):
                 "time_initialized": datetime.now()
             }
         }
-        cache.add(station_cache_key, cache_instance)
+        cache.set(station_cache_key, cache_instance)
         return Response(status=status.HTTP_200_OK)
 
 
@@ -105,29 +97,4 @@ def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_
             "time_initialized": datetime.now()
         }
         cache.set(station_cache_key, cache_object)
-        return Response( status=status.HTTP_200_OK)
-
-
-"""{"key":{
-    "key1": {
-        "price": 100,
-        "votes": 2,
-        "time_initialized": 120291
-    },
-    "key2": {
-        "price": 550,
-        "votes": 2,
-        "time_initialized": 120291
-    },
-    "key3": {
-        "price": 700,
-        "votes": 1,
-        "time_initialized": 120291
-    },
-    "key4": {
-        "price": 100,
-        "votes": 1,
-        "time_initialized": 120291
-    }
-}}
-"""
+        return Response(status=status.HTTP_200_OK)
