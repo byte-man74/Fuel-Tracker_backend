@@ -1,7 +1,7 @@
 import string
 import random
 from Main.models import Fueling_station
-from datetime import datetime
+from datetime import datetime, timedelta
 from rest_framework import status
 from django.core.cache import cache
 from django.http import HttpResponse
@@ -39,7 +39,6 @@ def check_vote_status(status):
 def find_key_by_value(cache_object, price_value):
     for key, value in cache_object.items():
         if value['price'] == price_value:
-            print('yes key exists!')
             return key
     return None
 
@@ -48,10 +47,11 @@ def process_vote_request(price_value, cache_object, station_cache_key, data):
     cache_key = find_key_by_value(cache_object, price_value)
     if cache_key is not None:
         cache_object[cache_key]['votes'] += 1
-        cache.set(station_cache_key, cache_object)
+        cache.set(station_cache_key, cache_object, int(
+            timedelta(hours=1.5).total_seconds()))
         return Response(status=status.HTTP_200_OK)
-    else_function(station_cache_key, data)
-
+    else:
+        else_function(station_cache_key, data)
 
 
 def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_id):
@@ -63,10 +63,12 @@ def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_i
         price_value = data.get('price')
 
         if price_value is not None:
-            process_vote_request(price_value, cache_object, station_cache_key, data)
+            process_vote_request(price_value, cache_object,
+                                 station_cache_key, data)
             return
 
-    else_function(station_cache_key, data)
+    else:
+        else_function(station_cache_key, data)
 
 
 def else_function(station_cache_key, data):
@@ -86,14 +88,16 @@ def else_function(station_cache_key, data):
                 "time_initialized": datetime.now()
             }
         }
-        cache.set(station_cache_key, cache_instance)
+        cache.set(station_cache_key, cache_instance, int(
+            timedelta(hours=1.5).total_seconds()))
         return Response(status=status.HTTP_200_OK)
 
 
 def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_cache_key):
     if num_keys >= 4:
         processed_cache_object = process_request_on_cache(data, cache_object)
-        cache.set(station_cache_key, processed_cache_object)
+        cache.set(station_cache_key, processed_cache_object,
+                  int(timedelta(hours=1.5).total_seconds()))
         return Response(status=status.HTTP_200_OK)
     else:
         cache_object[generate_random_text(7)] = {
@@ -101,10 +105,10 @@ def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_
             "votes": 1,
             "time_initialized": datetime.now()
         }
-        cache.set(station_cache_key, cache_object)
+        cache.set(station_cache_key, cache_object, int(
+            timedelta(hours=1.5).total_seconds()))
         return Response(status=status.HTTP_200_OK)
 
-# Your remaining code...
 
 
 def process_request_on_cache(data, cache_objects):
@@ -135,12 +139,9 @@ def find_least_engaged_object(cache_object):
 
 
 def delete_least_engaged_object(cache_object):
-     
     if cache_object is not None:
         least_engaged_key = find_least_engaged_object(cache_object)
         if least_engaged_key is not None:
             del cache_object[least_engaged_key]
             return cache_object
-            
-
 
