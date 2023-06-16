@@ -1,6 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
+from Auth.models import CustomUser
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework import status
 from rest_framework.views import APIView
@@ -76,6 +77,35 @@ class ChangePasswordView(APIView):
         user.save()
 
         return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+    
+
+'''Edit account info'''
+
+
+class EditAccountInfoView(APIView):
+    def put(self, request):
+        user = request.user
+        email = request.data.get('email')
+        username = request.data.get('username')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+
+        # Check if email is provided and not already taken by another user
+        if email:
+            if CustomUser.objects.filter(email=email).exclude(pk=user.pk).exists():
+                return Response({'error': 'Email is already in use'}, status=status.HTTP_400_BAD_REQUEST)
+            user.email = email
+
+
+        # Update the first name and last name
+        if first_name:
+            user.first_name = first_name
+        if last_name:
+            user.last_name = last_name
+
+        user.save()
+
+        return Response({'message': 'Account information updated successfully'}, status=status.HTTP_200_OK)
 
 
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
