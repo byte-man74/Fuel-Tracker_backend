@@ -152,10 +152,10 @@ class EditPriceGetOptions(APIView):
         if not vote_validation:
             raise ValueError("Vote key 'value' does not exist in the data.")
 
-        vote_status = check_vote_status(data)
+        vote_status = vote_validation
 
         if vote_status:
-            print(' status was true')
+            print('status was true')
             check_cache_key_for_fuel_station_id_and_process_request(
                 data, fuel_station_id)
             # act on the cache

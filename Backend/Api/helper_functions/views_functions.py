@@ -1,10 +1,11 @@
 import string
 import random
 from Main.models import Fueling_station
-from django.core.cache import cache
 from datetime import datetime
-from rest_framework.response import Response
 from rest_framework import status
+from django.core.cache import cache
+from django.http import HttpResponse
+from rest_framework.response import Response
 
 
 @staticmethod
@@ -29,6 +30,7 @@ def generate_random_text(length):
 
 
 def check_if_vote_key_exists(data):
+    print('have checked if vote key exists')
     return 'vote' in data
 
 
@@ -71,7 +73,7 @@ def else_function(station_cache_key, data):
     if cache_object is not None:
         num_keys = len(cache_object)
 
-        process_cache_per_the_numbers_of_keys(
+        return process_cache_per_the_numbers_of_keys(
             num_keys, data, cache_object, station_cache_key)
 
     else:
@@ -89,7 +91,7 @@ def else_function(station_cache_key, data):
 
 def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_cache_key):
     if num_keys >= 4:
-        pass
+        return Response(status=status.HTTP_200_OK)
     else:
         cache_object[generate_random_text(7)] = {
             "price": data['price'],
@@ -98,3 +100,5 @@ def process_cache_per_the_numbers_of_keys(num_keys, data, cache_object, station_
         }
         cache.set(station_cache_key, cache_object)
         return Response(status=status.HTTP_200_OK)
+
+# Your remaining code...
