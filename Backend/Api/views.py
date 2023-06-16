@@ -92,8 +92,9 @@ class GetNearbyFuelingStation(APIView):
             station = Fueling_station.objects.get(id=data['id'])
             position = Fuel_Station_Position.objects.select_related(
                 'station').get(station=station)
+            print(position.longitude)
             fuel_station_with_location = {
-                'station': data, 'position': FuelStationPositionSerializer(position).data}
+                'station': data, 'position': {"longitude": position.longitude, "latitude": position.latitude}}
             fuel_stations_with_location.append(fuel_station_with_location)
 
         return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_station_with_location})
@@ -128,21 +129,18 @@ class ViewFuelingStationInformation (APIView):
         return Response(serialized_data)
 
 
-''''''
+
 
 
 class EditPriceGetOptions(APIView):
-    no_option_dictionary = {"details": "no options"}
-
     def get(self, request, fuel_station_id):
-        # get cache key for the fuel station
         station_cache_key = return_fuel_station_cache_key(fuel_station_id)
-
         cache_object = cache.get(station_cache_key)
+
         if cache_object is not None:
             return Response(data={'cache_object': cache_object}, status=status.HTTP_200_OK)
         else:
-            return Response(data=self.no_option_dictionary, status=status.HTTP_204_NO_CONTENT)
+            return Response(data={'details': 'no options'}, status=status.HTTP_204_NO_CONTENT)
 
     def post(self, request, fuel_station_id):
         station_cache_key = return_fuel_station_cache_key(fuel_station_id)
@@ -152,15 +150,20 @@ class EditPriceGetOptions(APIView):
         if not vote_validation:
             raise ValueError("Vote key 'value' does not exist in the data.")
 
-        vote_status = vote_validation
+        vote_status = check_vote_status(data)
 
         if vote_status:
-            print('status was true')
             check_cache_key_for_fuel_station_id_and_process_request(
                 data, fuel_station_id)
-            # act on the cache
+            return Response(status=status.HTTP_200_OK)
         else:
-            else_function(station_cache_key, data)
+            response = else_function(station_cache_key, data)
+            if response is not None:
+                return response
+            else:
+                return Response(status=status.HTTP_200_OK)
+
+# Your remaining code...
 
 # todo
 # api view for change password

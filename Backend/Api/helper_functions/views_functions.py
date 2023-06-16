@@ -30,7 +30,6 @@ def generate_random_text(length):
 
 
 def check_if_vote_key_exists(data):
-    print('have checked if vote key exists')
     return 'vote' in data
 
 
@@ -41,14 +40,16 @@ def check_vote_status(status):
 def find_key_by_value(cache_object, price_value):
     for key, value in cache_object.items():
         if value['price'] == price_value:
+            print('yes key exists!')
             return key
     return None
 
 
-def process_vote_request(price_value, cache_object):
+def process_vote_request(price_value, cache_object, station_cache_key):
     cache_key = find_key_by_value(cache_object, price_value)
     if cache_key is not None:
         cache_object[cache_key]['votes'] += 1
+        cache.set(station_cache_key, cache_object)
         return Response(status=status.HTTP_200_OK)
     # Add extra processing here for when the vote is above a certain number
 
@@ -62,7 +63,7 @@ def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_i
         price_value = data.get('price')
 
         if price_value is not None:
-            process_vote_request(price_value, cache_object)
+            process_vote_request(price_value, cache_object, station_cache_key)
             return
 
     else_function(station_cache_key, data)
