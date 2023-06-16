@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
@@ -55,6 +56,26 @@ class RegisterView(APIView):
 
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
+
+
+'''change passsword'''
+
+
+class ChangePasswordView(APIView):
+    def put(self, request):
+        user = request.user
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        # Verify the user's current password
+        if not user.check_password(current_password):
+            return Response({'error': 'Incorrect current password'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Set the new password using make_password function
+        user.set_password(new_password)
+        user.save()
+
+        return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
 
 
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
@@ -131,7 +152,6 @@ class ViewFuelingStationInformation (APIView):
 
 
 
-
 class EditPriceGetOptions(APIView):
     def get(self, request, fuel_station_id):
         station_cache_key = return_fuel_station_cache_key(fuel_station_id)
@@ -163,7 +183,6 @@ class EditPriceGetOptions(APIView):
             else:
                 return Response(status=status.HTTP_200_OK)
 
-# Your remaining code...
 
 # todo
 # api view for change password

@@ -1,12 +1,14 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from .views import EmailTokenObtainPairView, RegisterView, GetNearbyFuelingStation, ViewFuelingStationInformation, EditPriceGetOptions
+from .views import EmailTokenObtainPairView, RegisterView, GetNearbyFuelingStation, ViewFuelingStationInformation, EditPriceGetOptions, ChangePasswordView
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('token/obtain/', EmailTokenObtainPairView.as_view(),
          name='token_obtain_pair'),
+    path('change-password/', ChangePasswordView.as_view(),
+         name='change_password'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('get_nearby_fueling_stations/', GetNearbyFuelingStation.as_view(),
          name='get-nearby-fueling-stations'),
