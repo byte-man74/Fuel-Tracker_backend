@@ -214,6 +214,8 @@ class EditPriceGetOptions(APIView):
                 return response
             else:
                 return Response(status=status.HTTP_200_OK)
+            
+            # {'vote": true, 'price': 300}
 
 '''vote for a fuel price'''
 class VoteFuelStationPriceView(APIView):
@@ -242,12 +244,8 @@ class UpdateVoteCountOpenCLoseView(APIView):
 
         return Response({'message': 'Vote count update task has been scheduled'}, status=status.HTTP_200_OK)
 
-
-
+# {"vote_type": "open"}
 
 
 
 # todo
-# api to async add number of votes on the approved price
-
-# {{'vote": true, 'price': 300}}

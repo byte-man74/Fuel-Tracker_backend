@@ -1,5 +1,5 @@
 - database modelling ✅
 - Authentication ✅
-- DRF configuration
-- Cache 
-- Queue
+- DRF configuration✅
+- Cache ✅
+- Queue✅
