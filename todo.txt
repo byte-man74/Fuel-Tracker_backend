@@ -3,3 +3,5 @@
 - DRF configuration✅
 - Cache ✅
 - Queue✅
+- media storage
+- database settings
