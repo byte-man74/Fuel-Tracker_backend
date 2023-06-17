@@ -1,4 +1,5 @@
 from __future__ import absolute_import, unicode_literals
+from .models import Fuel_Station_Extra_Information
 from .models import Fuel_Station_Traffic_Rating
 from Main.models import Fuel_Station_Price
 
@@ -42,3 +43,21 @@ def update_traffic_rating_count(fuel_station_id, rating_type):
         fuel_station_traffic.good_rating_count += 1
 
     fuel_station_traffic.save()
+
+
+@shared_task
+def update_vote_count(station_id, vote_type):
+    try:
+        fuel_station_info = Fuel_Station_Extra_Information.objects.get(
+            station_id=station_id)
+    except Fuel_Station_Extra_Information.DoesNotExist:
+        # Handle error if the fuel station extra information object doesn't exist
+        return
+
+    # Update the vote count based on the vote_type
+    if vote_type == 'open':
+        fuel_station_info.number_of_votes_for_fuel_station_being_open += 1
+    elif vote_type == 'close':
+        fuel_station_info.number_of_votes_for_fuel_station_being_close += 1
+
+    fuel_station_info.save()
