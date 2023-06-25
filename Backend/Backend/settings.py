@@ -202,9 +202,6 @@ AWS_S3_REGION_NAME = 'your-region-name'  # e.g., 'us-east-1'
 AWS_LOCATION = 'media'
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/{AWS_LOCATION}/'
 
-# Configure the static files storage
-STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Configure the media files storage
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
