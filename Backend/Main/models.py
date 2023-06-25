@@ -11,7 +11,8 @@ class Fueling_station(models.Model):
     background_image = models.ImageField(
         upload_to="Fueling_station_Image_directory", null=True)
     local_government = models.CharField( max_length=50)
-
+    address = models.CharField(null=True,  max_length=50)
+    opening_hours = models.CharField(null=True, max_length=50)
     def __str__(self):
         return self.name
 
