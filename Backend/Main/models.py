@@ -13,6 +13,8 @@ class Fueling_station(models.Model):
     local_government = models.CharField( max_length=50)
     address = models.CharField(null=True,  max_length=50)
     opening_hours = models.CharField(null=True, max_length=50)
+    phone_number = models.CharField(max_length=200, null=True)
+    
     def __str__(self):
         return self.name
 
@@ -23,6 +25,8 @@ class Fuel_Station_Price (models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     station = models.OneToOneField(
         "Main.Fueling_station", on_delete=models.CASCADE)
+
+
 
     def get_formatted_amount(self):
         formatted_amount = "{:,}".format(self.amount)
