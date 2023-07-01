@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 from .models import Fuel_Station_Extra_Information
 from .models import Fuel_Station_Traffic_Rating
 from Main.models import Fuel_Station_Price
+from Records.models import Price_Change_Record
 
 from celery import shared_task
 
@@ -61,3 +62,18 @@ def update_vote_count(station_id, vote_type):
         fuel_station_info.number_of_votes_for_fuel_station_being_close += 1
 
     fuel_station_info.save()
+
+
+@shared_task
+def create_price_record(fuel_station_id, updated_price):
+    try:
+        station_price = Fuel_Station_Price.objects.get(station=fuel_station_id)
+    except Fuel_Station_Price.DoesNotExist:
+        return
+
+    price_object = Price_Change_Record.objects.create(
+        station=fuel_station_id,
+        initial_price=station_price.amount,
+        new_price=updated_price
+    )
+    price_object.save()
