@@ -8,3 +8,9 @@ urlpatterns = [
     path('api/',  include("Api.urls")),
     path('', include("Main.urls"))
 ]
+
+# stage 1 
+# will add name and locaation
+# stage 2
+ # will add other information like opening hours
+ # take contact information off 

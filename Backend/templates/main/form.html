@@ -10,267 +10,177 @@
     <link rel="stylesheet" href="" />
   </head>
   <body>
-    <form id="msform">
-      <!-- progressbar -->
-      <ul id="progressbar">
-        <li class="active">Account Setup</li>
-        <li>Social Profiles</li>
-        <li>Personal Details</li>
-      </ul>
-      <!-- fieldsets -->
-      <fieldset>
-        <h2 class="fs-title">Create your account</h2>
-        <h3 class="fs-subtitle">This is step 1</h3>
-        <input type="text" name="email" placeholder="Email" />
-        <input type="password" name="pass" placeholder="Password" />
-        <input type="password" name="cpass" placeholder="Confirm Password" />
-        <input type="button" name="next" class="next action-button" value="Next" />
-      </fieldset>
-      <fieldset>
-        <h2 class="fs-title">Social Profiles</h2>
-        <h3 class="fs-subtitle">Your presence on the social network</h3>
-        <input type="text" name="twitter" placeholder="Twitter" />
-        <input type="text" name="facebook" placeholder="Facebook" />
-        <input type="text" name="gplus" placeholder="Google Plus" />
-        <input type="button" name="previous" class="previous action-button" value="Previous" />
-        <input type="button" name="next" class="next action-button" value="Next" />
-      </fieldset>
-      <fieldset>
-        <h2 class="fs-title">Personal Details</h2>
-        <h3 class="fs-subtitle">We will never sell it</h3>
-        <input type="text" name="fname" placeholder="First Name" />
-        <input type="text" name="lname" placeholder="Last Name" />
-        <input type="text" name="phone" placeholder="Phone" />
-        <textarea name="address" placeholder="Address"></textarea>
-        <input type="button" name="previous" class="previous action-button" value="Previous" />
-        <a href="https://twitter.com/GoktepeAtakan" class="submit action-button" target="_top">Submit</a>
-      </fieldset>
-    </form>
+    <div class="container">
+      <!-- code here -->
+      <div class="card">
+        <div class="card-image">
+          <h2 class="card-heading">
+            Get started
+            <small>Let us create your account</small>
+          </h2>
+        </div>
+        <form class="card-form">
+          <div class="input">
+            <input type="text" class="input-field" value="Alexander Parkinson" required />
+            <label class="input-label">Full name</label>
+          </div>
+          <div class="input">
+            <input type="text" class="input-field" value="vlockn@gmail.com" required />
+            <label class="input-label">Email</label>
+          </div>
+          <div class="input">
+            <input type="password" class="input-field" required />
+            <label class="input-label">Password</label>
+          </div>
+          <div class="action">
+            <button class="action-button">Get started</button>
+          </div>
+        </form>
+        <div class="card-info">
+          <p>
+            By signing up you are agreeing to our <a href="#">Terms and Conditions</a>
+          </p>
+        </div>
+      </div>
+    </div>
 
     <style>
-      /*custom font*/
-      @import url(https://fonts.googleapis.com/css?family=Montserrat);
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
       
-      /*basic reset*/
-      * {
-        margin: 0;
-        padding: 0;
-      }
-      
-      html {
-        height: 100%;
-        /*Image only BG fallback*/
-      
-        /*background = gradient + image pattern combo*/
-        background: linear-gradient(rgba(196, 102, 0, 0.6), rgba(155, 89, 182, 0.6));
+      *,
+      *:after,
+      *:before {
+        box-sizing: border-box;
       }
       
       body {
-        font-family: montserrat, arial, verdana;
+        font-family: 'DM Sans', sans-serif;
+        line-height: 1.5;
+        background-color: #f1f3fb;
+        padding: 0 2rem;
       }
-      /*form styles*/
-      #msform {
-        width: 400px;
-        margin: 50px auto;
-        text-align: center;
-        position: relative;
-      }
-      #msform fieldset {
-        background: white;
-        border: 0 none;
-        border-radius: 3px;
-        box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
-        padding: 20px 30px;
-        box-sizing: border-box;
-        width: 80%;
-        margin: 0 10%;
       
-        /*stacking fieldsets above each other*/
-        position: relative;
-      }
-      /*Hide all except first fieldset*/
-      #msform fieldset:not(:first-of-type) {
-        display: none;
-      }
-      /*inputs*/
-      #msform input,
-      #msform textarea {
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        margin-bottom: 10px;
-        width: 100%;
-        box-sizing: border-box;
-        font-family: montserrat;
-        color: #2c3e50;
-        font-size: 13px;
-      }
-      /*buttons*/
-      #msform .action-button {
-        width: 100px;
-        background: #27ae60;
-        font-weight: bold;
-        color: white;
-        border: 0 none;
-        border-radius: 1px;
-        cursor: pointer;
-        padding: 10px;
-        margin: 10px 5px;
-        text-decoration: none;
-        font-size: 14px;
-      }
-      #msform .action-button:hover,
-      #msform .action-button:focus {
-        box-shadow: 0 0 0 2px white, 0 0 0 3px #27ae60;
-      }
-      /*headings*/
-      .fs-title {
-        font-size: 15px;
-        text-transform: uppercase;
-        color: #2c3e50;
-        margin-bottom: 10px;
-      }
-      .fs-subtitle {
-        font-weight: normal;
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 20px;
-      }
-      /*progressbar*/
-      #progressbar {
-        margin-bottom: 30px;
-        overflow: hidden;
-        /*CSS counters to number the steps*/
-        counter-reset: step;
-      }
-      #progressbar li {
-        list-style-type: none;
-        color: white;
-        text-transform: uppercase;
-        font-size: 9px;
-        width: 33.33%;
-        float: left;
-        position: relative;
-      }
-      #progressbar li:before {
-        content: counter(step);
-        counter-increment: step;
-        width: 20px;
-        line-height: 20px;
+      img {
+        max-width: 100%;
         display: block;
-        font-size: 10px;
-        color: #333;
-        background: white;
-        border-radius: 3px;
-        margin: 0 auto 5px auto;
       }
-      /*progressbar connectors*/
-      #progressbar li:after {
-        content: '';
+      
+      // iOS Reset
+      input {
+        appearance: none;
+        border-radius: 0;
+      }
+      
+      .card {
+        margin: 2rem auto;
+        display: flex;
+        flex-direction: column;
         width: 100%;
-        height: 2px;
-        background: white;
+        max-width: 425px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px 0 rgba(#999, 0.25);
+        padding: 0.75rem;
+      }
+      
+      .card-image {
+        border-radius: 8px;
+        overflow: hidden;
+        padding-bottom: 65%;
+        background-image: url('https://assets.codepen.io/285131/coffee_1.jpg');
+        background-repeat: no-repeat;
+        background-size: 150%;
+        background-position: 0 5%;
+        position: relative;
+      }
+      
+      .card-heading {
         position: absolute;
-        left: -50%;
-        top: 9px;
-        z-index: -1; /*put it behind the numbers*/
+        left: 10%;
+        top: 15%;
+        right: 10%;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #735400;
+        line-height: 1.222;
+        small {
+          display: block;
+          font-size: 0.75em;
+          font-weight: 400;
+          margin-top: 0.25em;
+        }
       }
-      #progressbar li:first-child:after {
-        /*connector not needed before the first step*/
-        content: none;
+      
+      .card-form {
+        padding: 2rem 1rem 0;
       }
-      /*marking active/completed steps green*/
-      /*The number of the step and the connector before it = green*/
-      #progressbar li.active:before,
-      #progressbar li.active:after {
-        background: #27ae60;
-        color: white;
+      
+      .input {
+        display: flex;
+        flex-direction: column-reverse;
+        position: relative;
+        padding-top: 1.5rem;
+        & + .input {
+          margin-top: 1.5rem;
+        }
+      }
+      
+      .input-label {
+        color: #8597a3;
+        position: absolute;
+        top: 1.5rem;
+        transition: 0.25s ease;
+      }
+      
+      .input-field {
+        border: 0;
+        z-index: 1;
+        background-color: transparent;
+        border-bottom: 2px solid #eee;
+        font: inherit;
+        font-size: 1.125rem;
+        padding: 0.25rem 0;
+        &:focus,
+        &:valid {
+          outline: 0;
+          border-bottom-color: #6658d3;
+          & + .input-label {
+            color: #6658d3;
+            transform: translateY(-1.5rem);
+          }
+        }
+      }
+      
+      .action {
+        margin-top: 2rem;
+      }
+      
+      .action-button {
+        font: inherit;
+        font-size: 1.25rem;
+        padding: 1em;
+        width: 100%;
+        font-weight: 500;
+        background-color: #6658d3;
+        border-radius: 6px;
+        color: #fff;
+        border: 0;
+        &:focus {
+          outline: 0;
+        }
+      }
+      
+      .card-info {
+        padding: 1rem 1rem;
+        text-align: center;
+        font-size: 0.875rem;
+        color: #8597a3;
+        a {
+          display: block;
+          color: #6658d3;
+          text-decoration: none;
+        }
       }
     </style>
-    <script src="" async defer>
-      //jQuery time
-      var current_fs, next_fs, previous_fs //fieldsets
-      var left, opacity, scale //fieldset properties which we will animate
-      var animating //flag to prevent quick multi-click glitches
-      
-      $('.next').click(function () {
-        if (animating) return false
-        animating = true
-      
-        current_fs = $(this).parent()
-        next_fs = $(this).parent().next()
-      
-        //activate next step on progressbar using the index of next_fs
-        $('#progressbar li').eq($('fieldset').index(next_fs)).addClass('active')
-      
-        //show the next fieldset
-        next_fs.show()
-        //hide the current fieldset with style
-        current_fs.animate(
-          { opacity: 0 },
-          {
-            step: function (now, mx) {
-              //as the opacity of current_fs reduces to 0 - stored in "now"
-              //1. scale current_fs down to 80%
-              scale = 1 - (1 - now) * 0.2
-              //2. bring next_fs from the right(50%)
-              left = now * 50 + '%'
-              //3. increase opacity of next_fs to 1 as it moves in
-              opacity = 1 - now
-              current_fs.css({
-                transform: 'scale(' + scale + ')',
-                position: 'absolute'
-              })
-              next_fs.css({ left: left, opacity: opacity })
-            },
-            duration: 800,
-            complete: function () {
-              current_fs.hide()
-              animating = false
-            },
-            //this comes from the custom easing plugin
-            easing: 'easeInOutBack'
-          }
-        )
-      })
-      
-      $('.previous').click(function () {
-        if (animating) return false
-        animating = true
-      
-        current_fs = $(this).parent()
-        previous_fs = $(this).parent().prev()
-      
-        //de-activate current step on progressbar
-        $('#progressbar li').eq($('fieldset').index(current_fs)).removeClass('active')
-      
-        //show the previous fieldset
-        previous_fs.show()
-        //hide the current fieldset with style
-        current_fs.animate(
-          { opacity: 0 },
-          {
-            step: function (now, mx) {
-              //as the opacity of current_fs reduces to 0 - stored in "now"
-              //1. scale previous_fs from 80% to 100%
-              scale = 0.8 + (1 - now) * 0.2
-              //2. take current_fs to the right(50%) - from 0%
-              left = (1 - now) * 50 + '%'
-              //3. increase opacity of previous_fs to 1 as it moves in
-              opacity = 1 - now
-              current_fs.css({ left: left })
-              previous_fs.css({ transform: 'scale(' + scale + ')', opacity: opacity })
-            },
-            duration: 800,
-            complete: function () {
-              current_fs.hide()
-              animating = false
-            },
-            //this comes from the custom easing plugin
-            easing: 'easeInOutBack'
-          }
-        )
-      })
-    </script>
   </body>
 </html>
