@@ -84,7 +84,7 @@ class Fuel_Station_Extra_Information (models.Model):
 
         return f"{Fuel_station_name} extra informtion object"
 
-class Fuel_station_comment (models.Model):
+class FuelStationComment(models.Model):
     station = models.OneToOneField("Main.FuelingStation", on_delete=models.CASCADE)
     user_email = models.CharField(max_length=50)
     date_time_commented = models.DateTimeField(auto_now=True, auto_now_add=False)
