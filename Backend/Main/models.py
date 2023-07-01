@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class Fueling_station(models.Model):
-    name = models.CharField(max_length=50, help_text="name of fueling station")
+    name = models.CharField(max_length=50, help_text="name of fueling station", verbose_name='Fueling Station Name')
     logo = models.ImageField(
         upload_to="Fueling_station_Image_directory", null=True)
     background_image = models.ImageField(

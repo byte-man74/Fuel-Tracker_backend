@@ -1,3 +1,4 @@
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 
 <html>
@@ -8,6 +9,7 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   </head>
   <body>
     <div class="container">
@@ -18,33 +20,13 @@
             Agent Form
           </h2>
         </div>
-        <form class="card-form">
-          <div class="input">
-            <input type="text" class="input-field" value="Alexander Parkinson" required />
-            <label class="input-label">Full name</label>
-          </div>
-          <div class="input">
-            <input type="text" class="input-field" value="Alexander Parkinson" required />
-            <label class="input-label">Full name</label>
-          </div>
-          <div class="input">
-            <input type="text" class="input-field" value="Alexander Parkinson" required />
-            <label class="input-label">Full name</label>
-          </div>
-          <div class="input">
-            <input type="text" class="input-field" value="Alexander Parkinson" required />
-            <label class="input-label">Full name</label>
-          </div>
-          <div class="input">
-            <input type="text" class="input-field" value="Alexander Parkinson" required />
-            <label class="input-label">Full name</label>
-          </div>
-          <div class="input">
-            <input type="text" class="input-field" value="vlockn@gmail.com" required />
-            <label class="input-label">Email</label>
-          </div>
-          <div class="action">
-            <button class="action-button">Get started</button>
+        <form class="card-form" method="post">
+ 
+            {% csrf_token %}
+            {{ form|crispy }}
+
+          <div class="action" type="submit">
+            <button class="action-button" type="submit">Continue</button>
           </div>
         </form>
       </div>
@@ -93,7 +75,7 @@
         border-radius: 8px;
         overflow: hidden;
         padding-bottom: 65%;
-        background-image: url('https://www.cxtoday.com/wp-content/uploads/2021/10/75-of-Customers-Dont-Feel-Businesses-Listen-Feedback-.jpg');
+        background-image: url('./logo.png');
         background-repeat: no-repeat;
         background-size: 150%;
         background-position: 0 5%;

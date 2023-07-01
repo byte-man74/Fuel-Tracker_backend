@@ -35,7 +35,13 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
+    "crispy_forms",
+    "crispy_bootstrap4",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -50,6 +56,7 @@ MIDDLEWARE = [
 ]
 
 
+
 ROOT_URLCONF = 'Backend.urls'
 
 TEMPLATES = [
@@ -58,6 +65,9 @@ TEMPLATES = [
         'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
+            'builtins': [
+                'crispy_forms.templatetags.crispy_forms_tags',
+            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
