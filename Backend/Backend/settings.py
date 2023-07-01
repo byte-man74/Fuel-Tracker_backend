@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'Main',
     'Auth',
     'Api',
+    'Records',
     "corsheaders",
     'rest_framework',
     'rest_framework_simplejwt',
