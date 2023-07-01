@@ -65,7 +65,7 @@ def update_vote_count(station_id, vote_type):
 
 
 @shared_task
-def create_price_record(fuel_station_id, updated_price):
+def create_price_record(object, fuel_station_id):
     try:
         station_price = Fuel_Station_Price.objects.get(station=fuel_station_id)
     except Fuel_Station_Price.DoesNotExist:
@@ -74,6 +74,6 @@ def create_price_record(fuel_station_id, updated_price):
     price_object = Price_Change_Record.objects.create(
         station=fuel_station_id,
         initial_price=station_price.amount,
-        new_price=updated_price
+        new_price=object['price']
     )
     price_object.save()

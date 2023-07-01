@@ -6,7 +6,7 @@ from rest_framework import status
 from django.core.cache import cache
 from django.http import HttpResponse
 from rest_framework.response import Response
-from Main.tasks import update_db
+from Main.tasks import update_db, create_price_record
 
 
 
@@ -96,6 +96,7 @@ def delete_least_engaged_object(cache_object):
 def update_db_from_cache(cache_dictionary, station_cache_id):
     fuel_station_id = get_fuel_station_id_from_cache_key(station_cache_id)
     update_db.delay(cache_dictionary, fuel_station_id)
+    create_price_record.delay(cache_dictionary, fuel_station_id)
     cache.delete(station_cache_id)
 
 

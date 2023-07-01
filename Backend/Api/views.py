@@ -6,7 +6,7 @@ from Auth.models import CustomUser
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework import status
 from rest_framework.views import APIView
-from Main.tasks import update_votes, update_traffic_rating_count, update_vote_count
+from Main.tasks import update_votes, update_traffic_rating_count, update_vote_count, create_price_record
 from rest_framework_simplejwt.views import TokenObtainPairView
 from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
                                                   check_if_vote_key_exists,
