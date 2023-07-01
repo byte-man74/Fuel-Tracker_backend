@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from Main.models import Fueling_station, Fuel_Station_Position, Fuel_Station_Price, Fuel_Station_Traffic_Rating, Fuel_Station_Extra_Information
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer as JwtTokenObtainPairSerializer
+from Main.models import FuelStationComment
+from django.utils import timezone
 
 
 class TokenObtainPairSerializer(JwtTokenObtainPairSerializer):
@@ -45,3 +47,14 @@ class FuelStationPositionSerializer (serializers.Serializer):
     class Meta:
         model = Fuel_Station_Position
         fields = ('longitude', 'latitude')
+
+
+class FuelStationCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FuelStationComment
+        fields = ('station', 'user_email', 'date_time_commented')
+        read_only_fields = ('date_time_commented',)
+
+    def create(self, validated_data):
+        validated_data['date_time_commented'] = timezone.now()
+        return super().create(validated_data)

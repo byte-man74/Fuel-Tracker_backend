@@ -30,7 +30,8 @@ from Main.models import (Fueling_station,
                          Fuel_Station_Position,
                          Fuel_Station_Extra_Information)
 from django.core.cache import cache
-
+from rest_framework.decorators import api_view
+from .serializers import FuelStationCommentSerializer
 
 '''The RegisterView is responsible for user creation account and onboarding of user '''
 
@@ -249,3 +250,13 @@ class UpdateVoteCountOpenCLoseView(APIView):
 
 
 # todo
+
+# Assuming you have Django and Django Rest Framework installed and configured
+
+@api_view(['POST'])
+def create_comment(request):
+    serializer = FuelStationCommentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
