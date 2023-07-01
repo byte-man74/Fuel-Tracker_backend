@@ -84,14 +84,14 @@ class Fuel_Station_Extra_Information (models.Model):
 
         return f"{Fuel_station_name} extra informtion object"
 
+class FuelStationComment(models.Model):
+    station = models.OneToOneField("Main.FuelingStation", on_delete=models.CASCADE)
+    user_email = models.CharField(max_length=50)
+    date_time_commented = models.DateTimeField(auto_now=True, auto_now_add=False)
 
-class Fuel_station_comment  (models.Model):
-    station = models.OneToOneField("Main.Fueling_station", on_delete=models.CASCADE)
-    user_email = models.CharField( max_length=50)
-    date_time_commented = models.DateTimeField( auto_now=True, auto_now_add=False)
-
-    def get_recent_comments():
-        return Fuel_station_comment.objects.filter().sort()[:5]
+    @classmethod
+    def get_recent_comments(cls):
+        return cls.objects.order_by('-date_time_commented')[:5]
 
     def __str__(self):
-        return (f"{self.user_email} comment")
+        return f"{self.user_email} comment"
