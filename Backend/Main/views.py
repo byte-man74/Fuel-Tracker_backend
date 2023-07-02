@@ -32,6 +32,7 @@ def fuel_station_position(request, fueling_station_id):
             fueling_station_position = form.save(commit=False)
             fueling_station_position.station = station
             fueling_station_position.save()
+            messages.success(request, 'Fueling station location information has been added succesfully.')
             return redirect("success_okay")
     else:
         form = FuelingStationPositionForm(instance=fueling_station_position)
