@@ -28,3 +28,7 @@ def fuel_station_position(request, fueling_station_id):
         form = FuelingStationPositionForm()
 
     return render(request, 'main/form.html', {'form': form, 'fueling_station_id': fueling_station_id})
+
+
+def success (request):
+    return render(request, 'main/success.html',)
