@@ -8,7 +8,7 @@ def create_fueling_station(request):
         form = FuelingStationForm(request.POST)
         if form.is_valid():
             fueling_station = form.save()
-            messages.success(request, 'Fueling station created successfully.')
+            messages.success(request, 'Fueling station has been successfully added to the database please provide more information about the location.')
             return redirect('Fuel station position', fueling_station_id=fueling_station.id)
     else:
         form = FuelingStationForm()

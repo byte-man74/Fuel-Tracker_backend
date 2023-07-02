@@ -1,196 +1,206 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-
 <!DOCTYPE html>
-
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Mustard Insights Agent Form</title>
-    <meta name="description" content="" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  </head>
-  <body>
-    <div class="overlay"></div>
-    <div class="container">
-      <!-- code here -->
-      <div class="card">
-        <div class="card-image">
-          <img src="{% static 'images/logo.png' %}" alt="Logo">
-        </div>
-        <form class="card-form" method="post">
- 
-            {% csrf_token %}
-            {{ form|crispy }}
-
-          <div class="action" type="submit">
-            <button class="action-button" type="submit">Continue</button>
-          </div>
-        </form>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Mustard Insights Agent Form</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="container">
+    <!-- code here -->
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="card">
+      <div class="card-image">
+        <img src="{% static 'images/logo.png' %}" alt="Logo">
       </div>
+      <form class="card-form" method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="action" type="submit">
+          <button class="action-button" type="submit">Continue</button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
-      
-      *,
-      *:after,
-      *:before {
-        box-sizing: border-box;
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+    *,
+    *:after,
+    *:before {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.5;
+      background-color: rgba(241, 243, 251, 0.9);  /* Adjust the opacity value as needed */
+      padding: 0 2rem;
+      overflow-x: hidden;
+      background-image: url('https://img.freepik.com/premium-vector/abstract-seamless-pattern-background-with-artistic-style_7505-1600.jpg');
+      background-repeat: repeat;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .overlay {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 100;
+      top: 0;
+      left: 0;
+      background-color: rgba(10, 10, 10, 0.753);
+    }
+
+    .card {
+      position: relative;
+      z-index: 200;
+      margin: 2rem auto;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 425px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px 0 rgba(#999, 0.25);
+      padding: 0.75rem;
+    }
+
+    .card-image {
+      border-radius: 8px;
+      overflow: hidden;
+      padding-bottom: 0%;
+      background: linear-gradient(45deg, #FFA500, #FFD700);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .card-form {
+      padding: 2rem 1rem 0;
+    }
+
+    .input {
+      display: flex;
+      flex-direction: column-reverse;
+      position: relative;
+      padding-top: 1.5rem;
+      & + .input {
+        margin-top: 1.5rem;
       }
-      
-      body {
-        font-family: 'DM Sans', sans-serif;
-        line-height: 1.5;
-        background-color: rgba(241, 243, 251, 0.9);  /* Adjust the opacity value as needed */
-        padding: 0 2rem;
-        overflow-x: hidden;
-        background-image: url('https://img.freepik.com/premium-vector/abstract-seamless-pattern-background-with-artistic-style_7505-1600.jpg');
-        background-repeat: repeat;
+    }
+
+    .input-label {
+      color: #1f1f1f;
+      position: absolute;
+      top: 1.5rem;
+      transition: 0.25s ease;
+    }
+
+    .input-field {
+      border: 0;
+      z-index: 1;
+      background-color: transparent;
+      border-bottom: 2px solid #eee;
+      font: inherit;
+      font-size: 1.125rem;
+      padding: 0.25rem 0;
+      &:focus,
+      &:valid {
+        outline: 0;
+        border-bottom-color: #d79c1c;
+        & + .input-label {
+          color: #262626;
+          transform: translateY(-1.5rem);
+        }
       }
-      
-      
-      img {
-        max-width: 100%;
+    }
+
+    .action {
+      margin-top: 2rem;
+    }
+
+    .action-button {
+      font: inherit;
+      font-size: 1.25rem;
+      padding: 1em;
+      width: 100%;
+      font-weight: 500;
+      background-color: #000000;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      border: 0;
+      &:focus {
+        outline: 0;
+      }
+    }
+
+    .card-info {
+      padding: 1rem 1rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #8597a3;
+      a {
         display: block;
+        color: #363636;
+        text-decoration: none;
       }
-      
-      // iOS Reset
-      input {
-        appearance: none;
-        border-radius: 0;
-      }
+    }
 
-      .overlay {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        z-index: 100;
-        top: 0;
-        left: 0;
-        background-color: rgba(10, 10, 10, 0.753); 
-      }
-      
-      .card {
-        position: relative;
-        z-index: 200;
-        margin: 2rem auto;
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        max-width: 425px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 10px 20px 0 rgba(#999, 0.25);
-        padding: 0.75rem;
-      }
-      
+    .messages {
+      margin: 1rem 0;
+      padding: 0;
+      list-style: none;
+    }
 
-        .card-image {
-          border-radius: 8px;
-          overflow: hidden;
-          padding-bottom: 0%;
-          background: linear-gradient(45deg, #FFA500, #FFD700);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          position: relative;
-        }
- 
-      
-      
-      .card-heading {
-        position: absolute;
-        left: 10%;
-        top: 35%;
-        right: 10%;
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #1b1b1b;
-        line-height: 1.222;
-        small {
-          display: block;
-          font-size: 0.75em;
-          font-weight: 400;
-          margin-top: 0.25em;
-        }
-      }
-      
-      .card-form {
-        padding: 2rem 1rem 0;
-      }
-      
-      .input {
-        display: flex;
-        flex-direction: column-reverse;
-        position: relative;
-        padding-top: 1.5rem;
-        & + .input {
-          margin-top: 1.5rem;
-        }
-      }
-      
-      .input-label {
-        color: #1f1f1f;
-        position: absolute;
-        top: 1.5rem;
-        transition: 0.25s ease;
-      }
-      
-      .input-field {
-        border: 0;
-        z-index: 1;
-        background-color: transparent;
-        border-bottom: 2px solid #eee;
-        font: inherit;
-        font-size: 1.125rem;
-        padding: 0.25rem 0;
-        &:focus,
-        &:valid {
-          outline: 0;
-          border-bottom-color: #d79c1c;
-          & + .input-label {
-            color: #262626;
-            transform: translateY(-1.5rem);
-          }
-        }
-      }
-      
-      .action {
-        margin-top: 2rem;
-      }
-      
-      .action-button {
-        font: inherit;
-        font-size: 1.25rem;
-        padding: 1em;
-        width: 100%;
-        font-weight: 500;
-        background-color: #000000;
-        border-radius: 6px;
-        color: #fff;
-        cursor: pointer;
-        border: 0;
-        &:focus {
-          outline: 0;
-        }
-      }
-      
-      .card-info {
-        padding: 1rem 1rem;
-        text-align: center;
-        font-size: 0.875rem;
-        color: #8597a3;
-        a {
-          display: block;
-          color: #363636;
-          text-decoration: none;
-        }
-      }
-    </style>
-  </body>
+    .message {
+      margin-bottom: 0.5rem;
+      padding: 0.75rem;
+      border-radius: 5px;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .message.error {
+      background-color: #ff5252;
+    }
+
+    .message.success {
+      background-color: #5cb85c;
+      position: relative;
+      z-index: 200;
+    }
+
+    .message.info {
+      background-color: #5bc0de;
+    }
+
+    .message.warning {
+      background-color: #f0ad4e;
+    }
+  </style>
+</body>
 </html>
