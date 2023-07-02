@@ -1,4 +1,7 @@
+{% load static %}
 {% load crispy_forms_tags %}
+
+
 <!DOCTYPE html>
 
 <html>
@@ -16,9 +19,7 @@
       <!-- code here -->
       <div class="card">
         <div class="card-image">
-          <h2 class="card-heading">
-            Agent Form
-          </h2>
+          <img src="{% static 'images/logo.png' %}" alt="Logo">
         </div>
         <form class="card-form" method="post">
  
@@ -71,16 +72,19 @@
         padding: 0.75rem;
       }
       
-      .card-image {
-        border-radius: 8px;
-        overflow: hidden;
-        padding-bottom: 65%;
-        background-image: url('./logo.png');
-        background-repeat: no-repeat;
-        background-size: 150%;
-        background-position: 0 5%;
-        position: relative;
-      }
+
+        .card-image {
+          border-radius: 8px;
+          overflow: hidden;
+          padding-bottom: 5%;
+          background: linear-gradient(45deg, #FFA500, #FFD700);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+ 
+      
       
       .card-heading {
         position: absolute;
@@ -149,9 +153,9 @@
         padding: 1em;
         width: 100%;
         font-weight: 500;
-        background-color: #fe9b39;
+        background-color: #000000;
         border-radius: 6px;
-        color: #000000;
+        color: #fff;
         border: 0;
         &:focus {
           outline: 0;
