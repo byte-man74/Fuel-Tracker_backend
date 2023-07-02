@@ -1,20 +1,36 @@
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from .forms import FuelingStationForm, FuelingStationPositionForm
-from .models import Fueling_station, Fuel_Station_Position
+from .models import Fueling_station, Fuel_Station_Position, Images_on_station
 
+
+from django.db.models import Q
+
+# ...
 
 def create_fueling_station(request):
     if request.method == 'POST':
-        form = FuelingStationForm(request.POST)
+        form = FuelingStationForm(request.POST, request.FILES)
         if form.is_valid():
-            fueling_station = form.save()
-            messages.success(request, 'Fueling station has been successfully added to the database please provide more information about the location.')
+            fueling_station = form.save(commit=False)
+            fueling_station_name = fueling_station.name
+            
+            # Check if any Images_on_stations object has a similar name
+            images_on_stations = Images_on_station.objects.filter(Q(station_name__icontains=fueling_station_name)).first()
+            
+            if images_on_stations:
+                fueling_station.logo = images_on_stations.station_logo
+                fueling_station.background_image = images_on_stations.station_background
+            
+            fueling_station.save()
+
+            messages.success(request, 'Fueling station has been successfully added to the database. Please provide more information about the location.')
             return redirect('Fuel station position', fueling_station_id=fueling_station.id)
     else:
         form = FuelingStationForm()
-    
+
     return render(request, 'main/form.html', {'form': form})
+
 
 
 from django.db import IntegrityError

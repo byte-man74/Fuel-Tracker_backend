@@ -97,7 +97,7 @@ class FuelStationComment(models.Model):
         return f"{self.user_email} comment"
 
 
-class Images_on_stations (models.Model):
+class Images_on_station (models.Model):
     station_name = models.CharField(max_length=50)
     station_logo = models.ImageField(upload_to="logo")
     station_background = models.ImageField(upload_to="background")
