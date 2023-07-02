@@ -30,9 +30,9 @@
         <img src="{% static 'images/logo.png' %}" alt="Logo">
       </div>
       <div class="card-form">
-        <img src="{% static 'images/success.html' %}" alt="">
+        <img src="{% static 'images/success.gif' %}" alt="">
         <div class="action" type="submit">
-            <a href="{% url '' %}"></a>
+            <a href="{% url 'success_okay' %}"></a>
           <button class="action-button" type="submit">Add a new station</button>
         </div>
     </div>
@@ -101,6 +101,7 @@
     .card-form {
       padding: 2rem 1rem 0;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
     }
