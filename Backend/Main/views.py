@@ -31,4 +31,4 @@ def fuel_station_position(request, fueling_station_id):
 
 
 def success (request):
-    return render(request, 'main/success.html',)
+    return render(request, 'main/success.html')
