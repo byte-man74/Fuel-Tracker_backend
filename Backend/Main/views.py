@@ -8,28 +8,31 @@ from django.db.models import Q
 
 # ...
 
+
 def create_fueling_station(request):
     if request.method == 'POST':
-        form = FuelingStationForm(request.POST, request.FILES)
+        form = FuelingStationForm(request.POST)
         if form.is_valid():
-            fueling_station = form.save(commit=False)
-            fueling_station_name = fueling_station.name
+            fueling_station = form.save(commit=False)  # Save the form data but don't commit to the database yet
+            fueling_station_name = form.cleaned_data.get('name')  # Get the name from the form data
             
-            # Check if any Images_on_stations object has a similar name
-            images_on_stations = Images_on_station.objects.filter(Q(station_name__icontains=fueling_station_name)).first()
+            try:
+                image_on_station = Images_on_station.objects.get(station_name=fueling_station_name)
+                fueling_station.logo_url = image_on_station.station_logo.url
+                fueling_station.background_image_url = image_on_station.station_background.url
+            except Images_on_station.DoesNotExist:
+                # Set default values for logo_url and background_image_url
+                fueling_station.logo_url = 'default_logo_url'
+                fueling_station.background_image_url = 'default_background_image_url'
             
-            if images_on_stations:
-                fueling_station.logo = images_on_stations.station_logo
-                fueling_station.background_image = images_on_stations.station_background
-            
-            fueling_station.save()
-
+            fueling_station.save()  # Save the fueling_station object to the database
             messages.success(request, 'Fueling station has been successfully added to the database. Please provide more information about the location.')
             return redirect('Fuel station position', fueling_station_id=fueling_station.id)
     else:
         form = FuelingStationForm()
-
+    
     return render(request, 'main/form.html', {'form': form})
+
 
 
 
