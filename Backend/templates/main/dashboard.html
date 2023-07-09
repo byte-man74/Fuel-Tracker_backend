@@ -10,7 +10,7 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
     />
-    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" type="image/x-icon" href="{% static './images/favicon.png' %}">
 </head>
 <body>
     <section class="background">
@@ -33,7 +33,7 @@
                     </div>
                 </div>
             </div> {% endcomment %}
-            <a class="add-station">
+            <a class="add-station" href="{% url 'Add Fueling Station' %}">
                 <img src="{% static './images/add.svg' %}" alt="">
             </a>
         </div>
