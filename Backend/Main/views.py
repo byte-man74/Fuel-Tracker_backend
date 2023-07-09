@@ -18,7 +18,7 @@ def sign_up (request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  # Replace 'home' with the URL name of your home page
+            return redirect('dashboard')  # Replace 'home' with the URL name of your home page
     else:
         form = SignupForm()
     return render (request, 'main/sign_up.html', {'form': form}) 
@@ -88,7 +88,8 @@ def fuel_station_position(request, fueling_station_id):
 
     return render(request, 'main/form.html', {'form': form, 'fueling_station_id': fueling_station_id})
 
-
+def dashboard (request):
+    return render(request, 'main/dashboard.html')
 
 def success (request):
     return render(request, 'main/success.html')

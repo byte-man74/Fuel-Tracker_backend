@@ -30,7 +30,7 @@
         <img src="{% static 'images/logo.png' %}" alt="Logo">
       </div>
       <form class="card-form" method="post">
-        <h2 style="margin-bottom: 5%; color: rgba(0, 0, 0, 0.05);">Login</h2>
+        <h2 style="margin-bottom: 5%; color: rgba(0, 0, 0, 0.1);">Login</h2>
         {% csrf_token %}
         {{ form|crispy }}
         <div class="action" type="submit">
