@@ -79,7 +79,7 @@
     .logo-box {
         width: 94%;
         min-height: 40px;
-        
+        animation: fade-in 1s ease-in-out;
     }
     .empty-box{
         width: 55%;
@@ -92,6 +92,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        animation: slide-in 1s ease-in-out;
     }
     .content-box-empty{
         width: 94%;
@@ -100,6 +101,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        animation: slide-in 1s ease-in-out;
     }
     .add-station{
         width: 70px;
@@ -113,6 +115,7 @@
         align-items: center;
         cursor: pointer;
         transition: ease-in-out;
+        animation: bounce 0.5s ease-in-out infinite alternate;
     }
     .add-station:hover {
         background-color: orange;
@@ -151,5 +154,45 @@
     .edit-price-link{
         color: orange;
     }
+    
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slide-in {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-10px);
+      }
+    }
+    @media (max-width: 900px) {
+        .box-container {
+            width: 90%;
+        }
+        .empty-box{
+            width: 95%;
+            min-height: 5vh;
+        }
+    }
 </style>
 </html>
+
+
