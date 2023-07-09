@@ -199,7 +199,7 @@ CORS_ALLOW_HEADERS = ['*']
 
 # AWS
 
-USE_S3 =  'TRUE'
+USE_S3 =  False
 
 if USE_S3:
     AWS_LOCATION = 'static'
