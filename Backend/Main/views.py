@@ -2,13 +2,45 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from .forms import FuelingStationForm, FuelingStationPositionForm
 from .models import Fueling_station, Fuel_Station_Position, Images_on_station
-
+from .forms import LoginForm
+from django.contrib.auth import authenticate, login
+from .forms import SignupForm
 
 from django.db.models import Q
 
 # ...
 def landing_page (request):
     return render (request, 'main/landing_page.html')
+
+def sign_up (request):
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')  # Replace 'home' with the URL name of your home page
+    else:
+        form = SignupForm()
+    return render (request, 'main/sign_up.html', {'form': form}) 
+
+
+def login_page (request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('dashboard')  # Replace 'dashboard' with the desired URL for authenticated users
+            else:
+                form.add_error(None, 'Invalid email or password.')
+    else:
+        form = LoginForm()
+    
+    return render (request, 'main/login.html', {'form': form})
+
 
 def create_fueling_station(request):
     if request.method == 'POST':
@@ -33,13 +65,6 @@ def create_fueling_station(request):
         form = FuelingStationForm()
     
     return render(request, 'main/landing_page.html', {'form': form})
-
-def sign_up (request):
-    return render (request, 'main/sign_up.html') 
-
-def login_page (request):
-    return render (request, 'main/login.html')
-
 
 from django.db import IntegrityError
 
