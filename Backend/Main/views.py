@@ -7,7 +7,8 @@ from .models import Fueling_station, Fuel_Station_Position, Images_on_station
 from django.db.models import Q
 
 # ...
-
+def landing_page (request):
+    return render (request, 'main/landing_page.html')
 
 def create_fueling_station(request):
     if request.method == 'POST':
