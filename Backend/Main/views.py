@@ -34,7 +34,11 @@ def create_fueling_station(request):
     
     return render(request, 'main/landing_page.html', {'form': form})
 
+def sign_up (request):
+    return render (request, 'main/sign_up.html') 
 
+def login_page (request):
+    return render (request, 'main/login.html')
 
 
 from django.db import IntegrityError
