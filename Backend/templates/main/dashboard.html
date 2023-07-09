@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,100 +16,38 @@
     <section class="background">
         <div class="box-container">
             <div class="logo-box">
-                <img src="./images/logo.png" alt="">
+                <img src="{% static './images/short-logo.png' %}" alt="">
             </div>
-            <!-- <div class="content-box-empty">
-                <img src="./images/empty.png" class="empty-box" alt="">
-            </div> -->
-            <div class="content-box-occupied">
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="./images/station.svg" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
+            <div class="content-box-empty">
+                <img src="{% static './images/empty.png' %}" class="empty-box" alt="">
             </div>
+            {% comment %} <div class="content-box-occupied">
+                <div class="station-box-item">
+                    <div style=" display: flex; align-items: center;">
+                        <img src="{% static './images/station.svg' %}" alt="">
+                        <p class="station-text">Ooando Fueling station</p>
+                    </div>
+                    <div style=" display: flex; align-items: center;">
+                        <div class="fuel-price-container">N240</div>
+                        <a href="" class="edit-price-link">edit price</a>
+                    </div>
+                </div>
+            </div> {% endcomment %}
             <a class="add-station">
-                <img src="./images/add.svg" alt="">
+                <img src="{% static './images/add.svg' %}" alt="">
             </a>
         </div>
     </section>
 </body>
 <style>
+    @import url("https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Fira Sans", sans-serif;
+    }
     body{
         padding: 0;
         margin: 0;
@@ -125,7 +64,7 @@
     }
     .box-container {
         background-color: white;
-        width: 45.1%;
+        width: 50.1%;
         min-height: 6vh;
         border-radius: 10px;
         padding-top: 30px;
@@ -206,7 +145,7 @@
         width: 140px;
         height: 57px;
         margin-left: 40px;
-        margin-right: 40px;
+        margin-right: 20px;
         color: white;
     }
     .edit-price-link{
