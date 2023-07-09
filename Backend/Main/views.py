@@ -31,7 +31,7 @@ def create_fueling_station(request):
     else:
         form = FuelingStationForm()
     
-    return render(request, 'main/form.html', {'form': form})
+    return render(request, 'main/landing_page.html', {'form': form})
 
 
 
