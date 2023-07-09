@@ -23,11 +23,11 @@
                 <div class="station-box-item">
                     <div style=" display: flex; align-items: center;">
                         <img src="{% static './images/station.svg' %}" alt="">
-                        <p class="station-text">Ooando Fueling station</p>
+                        <p class="station-text">{{ station.name }}</p>
                     </div>
                     <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">N240</div>
-                        <a href="" class="edit-price-link">edit price</a>
+                        <div class="fuel-price-container">₦{{station.fuel_station_price.amount}}</div>
+                        <a href="{% url 'edit-price'  %}" class="edit-price-link">edit price</a>
                     </div>
                 </div>
             </div> 
