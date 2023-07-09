@@ -1,3 +1,4 @@
+{% load static %} {% load crispy_forms_tags %}
 <!DOCTYPE html>
 <!-- Coding By CodingNepal - www.codingnepalweb.com -->
 <html lang="en">
@@ -16,15 +17,10 @@
     <!-- Header or Navbar -->
     <header class="header">
       <nav class="navbar max-width">
-        <a href="#"><img src="images/logo.svg" alt="logo" /></a>
+        <a href="#"
+          ><img src="{% static 'images/short-logo.png' %}" alt="logo"
+        /></a>
         <ul class="links">
-          <li><a href="#">Fiverr BusIness</a></li>
-          <li><a href="#">Explore</a></li>
-          <li class="language">
-            <span class="material-symbols-outlined">language</span>
-            <a href="#">English</a>
-          </li>
-          <li><a href="#">Become a seller</a></li>
           <li class="btn signin"><a href="#">Sign In</a></li>
           <li class="btn join"><a href="#">Join</a></li>
         </ul>
@@ -34,7 +30,11 @@
     <!-- Hero section -->
     <section class="hero">
       <div class="content max-width">
-        <h2>Find the right freelance service, right away</h2>
+        <h2>Take the Lead in the Fuel Market</h2>
+        <p class="hero-p">
+          Join Our Registration Platform for Fuel Stations and Unlock Exclusive
+          Benefits to Accelerate Your Income!
+        </p>
         <div class="search-field">
           <input type="text" placeholder="Search for any service..." />
           <span class="material-symbols-outlined search-btn">search</span>
@@ -126,7 +126,7 @@
       /* Hero section styling */
       .hero {
         height: 100vh;
-        background-image: url("images/hero-img.jpg");
+        background-image: url("{% static 'images/baground.png' %}");
         background-position: center;
         background-size: cover;
         position: relative;
@@ -164,7 +164,11 @@
         font-size: 1rem;
         border-radius: 4px;
       }
-
+      .hero-p {
+        color: white;
+        width: 50%;
+        line-height: 165%;
+      }
       .search-field .search-btn {
         position: absolute;
         right: 0;
@@ -222,6 +226,10 @@
         .hero .content {
           max-width: 470px;
           text-align: center;
+        }
+
+        .hero-p {
+            width: 100%;
         }
 
         .hero .content h2 {
