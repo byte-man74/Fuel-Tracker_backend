@@ -21,8 +21,8 @@
           ><img src="{% static 'images/short-logo.png' %}" alt="logo"
         /></a>
         <ul class="links">
-          <li class="btn signin"><a href="#">Sign Up</a></li>
-          <li class="btn join"><a href="#">Login</a></li>
+          <li class="btn signin"><a href="{% url 'sign_up' %}">Sign Up</a></li>
+          <li class="btn join"><a href="{% url 'login' %}">Login</a></li>
         </ul>
       </nav>
     </header>
@@ -37,9 +37,9 @@
         </p>
         <div class="search-field">
           <input type="text" placeholder="Input your email..." />
-          <span class="material-symbols-outlined search-btn">
+          <a class="material-symbols-outlined search-btn" style="text-decoration: none;" href="{% url 'sign_up' %}">
             arrow_forward
-            </span>
+          </a>
         </div>
       </div>
     </section>
