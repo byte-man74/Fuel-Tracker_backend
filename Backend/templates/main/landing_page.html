@@ -31,12 +31,12 @@
     <!-- Hero section -->
     <section class="hero">
       <div class="content max-width">
-        <h2>Take the Lead in the Fuel Market</h2>
-        <p class="hero-p">
+        <h2 class="fade-in">Take the Lead in the Fuel Market</h2>
+        <p class="hero-p fade-in">
           Join Our Registration Platform for Fuel Stations and Unlock Exclusive
           Benefits to Accelerate Your Income!
         </p>
-        <div class="search-field">
+        <div class="search-field slide-up">
           <input type="text" placeholder="Input your email..." />
           <a class="material-symbols-outlined search-btn" style="text-decoration: none;" href="{% url 'sign_up' %}">
             arrow_forward
@@ -221,6 +221,35 @@
         color: #000;
       }
 
+      /* Animations */
+      .fade-in {
+        animation: fade-in 1s ease-in-out;
+      }
+
+      .slide-up {
+        animation: slide-up 1s ease-in-out;
+      }
+
+      @keyframes fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slide-up {
+       from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
       @media (max-width: 900px) {
         .hero {
           background: none;
@@ -232,7 +261,7 @@
         }
 
         .hero-p {
-            width: 100%;
+          width: 100%;
         }
 
         .hero .content h2 {
