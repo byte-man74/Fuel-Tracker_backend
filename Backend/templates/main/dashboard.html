@@ -18,10 +18,8 @@
             <div class="logo-box">
                 <img src="{% static './images/short-logo.png' %}" alt="">
             </div>
-            <div class="content-box-empty">
-                <img src="{% static './images/empty.png' %}" class="empty-box" alt="">
-            </div>
-            {% comment %} <div class="content-box-occupied">
+            {% for station in stations %}
+            <div class="content-box-occupied">
                 <div class="station-box-item">
                     <div style=" display: flex; align-items: center;">
                         <img src="{% static './images/station.svg' %}" alt="">
@@ -32,7 +30,12 @@
                         <a href="" class="edit-price-link">edit price</a>
                     </div>
                 </div>
-            </div> {% endcomment %}
+            </div> 
+            {% empty %}
+                <div class="content-box-empty">
+                    <img src="{% static './images/empty.png' %}" class="empty-box" alt="">
+                </div>
+            {% endfor %}
             <a class="add-station" href="{% url 'Add Fueling Station' %}">
                 <img src="{% static './images/add.svg' %}" alt="">
             </a>

@@ -89,7 +89,9 @@ def fuel_station_position(request, fueling_station_id):
     return render(request, 'main/form.html', {'form': form, 'fueling_station_id': fueling_station_id})
 
 def dashboard (request):
-    return render(request, 'main/dashboard.html')
+    stations = Fueling_station.objects.all().prefetch_related('fuel_station_price')
+
+    return render(request, 'main/dashboard.html', {'stations': stations})
 
 def success (request):
     return render(request, 'main/success.html')

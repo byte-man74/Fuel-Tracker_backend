@@ -16,14 +16,14 @@
   </head>
   <body>
     <!-- Header or Navbar -->
-    <header class="header">
+    <header class="header fade-in">
       <nav class="navbar max-width">
         <a href="#"
           ><img src="{% static 'images/short-logo.png' %}" alt="logo"
         /></a>
         <ul class="links">
-          <li class="btn signin"><a href="{% url 'sign_up' %}">Sign Up</a></li>
-          <li class="btn join"><a href="{% url 'login' %}">Login</a></li>
+          <li class="btn signin slide-right"><a href="{% url 'sign_up' %}">Sign Up</a></li>
+          <li class="btn join slide-right"><a href="{% url 'login' %}">Login</a></li>
         </ul>
       </nav>
     </header>
@@ -230,6 +230,10 @@
         animation: slide-up 1s ease-in-out;
       }
 
+      .slide-right {
+        animation: slide-right 1s ease-in-out;
+      }
+
       @keyframes fade-in {
         from {
           opacity: 0;
@@ -240,12 +244,23 @@
       }
 
       @keyframes slide-up {
-       from {
+        from {
           transform: translateY(100%);
           opacity: 0;
         }
         to {
           transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes slide-right {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
           opacity: 1;
         }
       }
