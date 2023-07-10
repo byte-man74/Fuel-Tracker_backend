@@ -12,6 +12,7 @@ class Fueling_station(models.Model):
     address = models.CharField(null=True,  max_length=50)
     opening_hours = models.CharField(null=True, max_length=50)
     phone_number = models.CharField(max_length=200, null=True)
+    agent = models.ForeignKey("Auth.CustomUser",  on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return self.name

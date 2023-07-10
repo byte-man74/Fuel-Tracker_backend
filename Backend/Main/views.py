@@ -25,6 +25,7 @@ def sign_up (request):
 
 
 def login_page (request):
+    
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -89,8 +90,8 @@ def fuel_station_position(request, fueling_station_id):
     return render(request, 'main/form.html', {'form': form, 'fueling_station_id': fueling_station_id})
 
 def dashboard (request):
-    stations = Fueling_station.objects.all().prefetch_related('fuel_station_price')
-
+    user = request.user 
+    stations = Fueling_station.objects.filter(agent=user).prefetch_related('fuel_station_price')
     return render(request, 'main/dashboard.html', {'stations': stations})
 
 def success (request):

@@ -19,24 +19,31 @@
             <div class="logo-box">
                 <img src="{% static './images/short-logo.png' %}" alt="">
             </div>
-            {% for station in stations %}
-            <div class="content-box-occupied">
-                <div class="station-box-item">
-                    <div style=" display: flex; align-items: center;">
-                        <img src="{% static './images/station.svg' %}" alt="">
-                        <p class="station-text">{{ station.name }}</p>
-                    </div>
-                    <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">₦{{station.fuel_station_price.amount|intcomma}}</div>
-                        <a href="" class="edit-price-link">edit price</a>
-                    </div>
-                </div>
-            </div> 
-            {% empty %}
+            {% if stations %}
+                <div class="content-box-occupied">
+                    {% for station in stations %}
+                        <div class="station-box-item">
+                            <div style=" display: flex; align-items: center;">
+                                <img src="{% static './images/station.svg' %}" alt="">
+                                <p class="station-text">{{ station.name }}</p>
+                            </div>
+                            <a style="display: flex; align-items: center; text-decoration: none" href="">
+                                <div class="fuel-price-container">
+                                    ₦{{station.fuel_station_price.amount|intcomma}}
+                                    <span class="material-symbols-outlined">
+                                        edit
+                                    </span>
+                                </div>
+                                
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div> 
+            {% else %}
                 <div class="content-box-empty">
                     <img src="{% static './images/empty.png' %}" class="empty-box" alt="">
                 </div>
-            {% endfor %}
+            {% endif %}
             <a class="add-station" href="{% url 'Add Fueling Station' %}">
                 <img src="{% static './images/add.svg' %}" alt="">
             </a>
@@ -134,6 +141,9 @@
         border: 1px solid rgba(0, 0, 0, 0.28);
         display: flex;
         padding-left: 15px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        flex-wrap: wrap;
         padding-right: 15px;
         justify-content: space-between;
         align-items: center;
@@ -147,9 +157,11 @@
         border-radius: 10px;
         background: #525252;
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         align-items: center;
-        width: 140px;
+        min-width: 140px;
+        padding-left: 10px;
+        padding-right: 10px;
         height: 57px;
         margin-left: 40px;
         margin-right: 20px;
@@ -194,6 +206,10 @@
         .empty-box{
             width: 95%;
             min-height: 5vh;
+        }
+        .fuel-price-container{
+            margin-left: 0;
+            margin-top: 10px;
         }
     }
 </style>
