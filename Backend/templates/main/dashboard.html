@@ -1,3 +1,4 @@
+{% load humanize %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -26,8 +27,8 @@
                         <p class="station-text">{{ station.name }}</p>
                     </div>
                     <div style=" display: flex; align-items: center;">
-                        <div class="fuel-price-container">₦{{station.fuel_station_price.amount}}</div>
-                        <a href="{% url 'edit-price'  %}" class="edit-price-link">edit price</a>
+                        <div class="fuel-price-container">₦{{station.fuel_station_price.amount|intcomma}}</div>
+                        <a href="" class="edit-price-link">edit price</a>
                     </div>
                 </div>
             </div> 
