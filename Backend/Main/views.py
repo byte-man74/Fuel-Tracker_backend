@@ -2,8 +2,8 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
-from .forms import FuelingStationForm, LoginForm, SignupForm
-from .models import Fueling_station, Fuel_Station_Position, Images_on_station
+from .forms import FuelingStationForm, LoginForm, SignupForm, FuelStationPriceForm
+from .models import Fueling_station, Fuel_Station_Position, Fuel_Station_Price
 from django.shortcuts import get_object_or_404
 
 def landing_page(request):
@@ -43,6 +43,7 @@ def create_fueling_station(request):
         form = FuelingStationForm(request.POST)
         if form.is_valid():
             fueling_station = form.save(commit=False)
+            fueling_station.agent = request.user
             fueling_station.save()
 
             longitude = request.POST.get('longitude')
@@ -59,15 +60,28 @@ def create_fueling_station(request):
                 position_object.latitude = latitude
                 position_object.save()
 
-            messages.success(request, 'Fueling station location information has been added successfully.')
-            return redirect("success_okay")
+            return redirect("edit_price", station.id)
     else:
         form = FuelingStationForm()
 
     return render(request, 'main/form.html', {'form': form})
 
-def edit_price (request):
-    pass
+def edit_fuel_station_price(request, station_id):
+    fueling_station = Fueling_station.objects.get(id=station_id)
+    try:
+        fuel_station_price = Fuel_Station_Price.objects.get(station=fueling_station)
+    except Fuel_Station_Price.DoesNotExist:
+        fuel_station_price = Fuel_Station_Price(station=fueling_station)
+
+    if request.method == 'POST':
+        form = FuelStationPriceForm(request.POST, instance=fuel_station_price)
+        if form.is_valid():
+            form.save()
+            return redirect('success_okay')  # Replace 'dashboard' with the desired URL for the dashboard view
+    else:
+        form = FuelStationPriceForm(instance=fuel_station_price)
+
+    return render(request, 'main/form.html', {'form': form, 'station_id': station_id})
 
 def dashboard(request):
     user = request.user 

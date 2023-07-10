@@ -1,5 +1,5 @@
 from django import forms
-from .models import Fueling_station, Fuel_Station_Position
+from .models import Fueling_station, Fuel_Station_Position, Fuel_Station_Price
 from django.contrib.auth.forms import UserCreationForm
 from Auth.models import CustomUser
 
@@ -23,3 +23,11 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = ('email', 'password1', 'password2')
+
+class FuelStationPriceForm(forms.ModelForm):
+    class Meta:
+        model = Fuel_Station_Price
+        fields = ['amount',]
+        labels = {
+            'amount': 'Fuel Price Amount per Litre',
+        }
