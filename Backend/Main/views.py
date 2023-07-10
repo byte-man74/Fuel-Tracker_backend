@@ -5,6 +5,7 @@ from django.db.models import Q
 from .forms import FuelingStationForm, LoginForm, SignupForm, FuelStationPriceForm
 from .models import Fueling_station, Fuel_Station_Position, Fuel_Station_Price
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 def landing_page(request):
     return render(request, 'main/landing_page.html')
@@ -37,7 +38,7 @@ def login_page(request):
     return render(request, 'main/login.html', {'form': form})
 
 
-
+@login_required(login_url='login')
 def create_fueling_station(request):
     if request.method == 'POST':
         form = FuelingStationForm(request.POST)
@@ -66,6 +67,7 @@ def create_fueling_station(request):
 
     return render(request, 'main/form.html', {'form': form})
 
+@login_required(login_url='login')
 def edit_fuel_station_price(request, station_id):
     fueling_station = Fueling_station.objects.get(id=station_id)
     try:
@@ -81,12 +83,14 @@ def edit_fuel_station_price(request, station_id):
     else:
         form = FuelStationPriceForm(instance=fuel_station_price)
 
-    return render(request, 'main/form.html', {'form': form, 'station_id': station_id})
+    return render(request, 'main/edit_price.html', {'form': form, 'station_id': station_id})
 
+@login_required(login_url='login')
 def dashboard(request):
     user = request.user 
     stations = Fueling_station.objects.filter(agent=user).prefetch_related('fuel_station_price')
     return render(request, 'main/dashboard.html', {'stations': stations})
 
+@login_required(login_url='login')
 def success(request):
     return render(request, 'main/success.html')

@@ -27,7 +27,7 @@
                                 <img src="{% static './images/station.svg' %}" alt="">
                                 <p class="station-text">{{ station.name }}</p>
                             </div>
-                            <a style="display: flex; align-items: center; text-decoration: none" href="">
+                            <a style="display: flex; align-items: center; text-decoration: none" href="{% url 'edit_price' station.id %}">
                                 <div class="fuel-price-container">
                                     ₦{{station.fuel_station_price.amount|intcomma}}
                                     <span class="material-symbols-outlined">
