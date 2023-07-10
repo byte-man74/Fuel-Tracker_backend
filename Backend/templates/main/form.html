@@ -16,6 +16,10 @@
   <div class="overlay"></div>
   <div class="container fade-in">
     <!-- code here -->
+    <div class="alert alert-warning fade-in">
+      Please make sure you are present at the fueling station to fill out the form.
+    </div>
+
     {% if messages %}
     <ul class="messages">
       {% for message in messages %}
@@ -26,12 +30,20 @@
     </ul>
     {% endif %}
     <div class="card fade-in">
-      <div class="card-image">
+      <a class="card-image" href="dashboard">
         <img src="{% static 'images/logo.png' %}" alt="Logo">
-      </div>
+      </a>
       <form class="card-form slide-up" method="post">
         {% csrf_token %}
         {{ form|crispy }}
+        <div class="input" style="display: none;">
+          <input type="hidden" id="longitude" name="longitude" />
+          <label for="longitude" class="input-label">Longitude</label>
+        </div>
+        <div class="input" style="display: none;">
+          <input type="hidden" id="latitude" name="latitude" />
+          <label for="latitude" class="input-label">Latitude</label>
+        </div>
         <div class="action" type="submit">
           <button class="action-button" type="submit">Continue</button>
         </div>
@@ -86,7 +98,23 @@
       box-shadow: 0 10px 20px 0 rgba(#999, 0.25);
       padding: 0.75rem;
     }
-
+    .alert {
+      margin-bottom: 1rem;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+    }
+  
+    .alert-warning {
+      color: #856404;
+      background-color: #fff3cd;
+      border-color: #ffeeba;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
     .card-image {
       border-radius: 8px;
       overflow: hidden;
@@ -156,8 +184,7 @@
       &:focus {
         outline: 0;
       }
-    }
-
+   ```html
     .card-info {
       padding: 1rem 1rem;
       text-align: center;
@@ -233,5 +260,29 @@
       }
     }
   </style>
+
+  <script>
+    
+    // Function to retrieve user's location
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      }
+    }
+
+    // Function to populate longitude and latitude input fields
+    function showPosition(position) {
+      const longitudeInput = document.getElementById('longitude');
+      const latitudeInput = document.getElementById('latitude');
+
+      // Set the values of longitude and latitude input fields
+      longitudeInput.value = position.coords.longitude;
+      latitudeInput.value = position.coords.latitude;
+      console.log(longitudeInput)
+    }
+
+    // Call the getLocation function when the document is loaded
+    document.addEventListener('DOMContentLoaded', getLocation);
+  </script>
 </body>
 </html>
