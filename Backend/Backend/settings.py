@@ -227,3 +227,15 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+CELERY_accept_content = ['application/json']
+CELERY_task_serializer = 'json'
+CELERY_TASK_DEFAULT_QUEUE = 'myqueue'
+CELERY_BROKER_URL = "sqs://%s:%s@" % (os.environ.get('AWS_ACCESS_KEY_ID'), os.environ.get('AWS_SECRET_ACCESS_KEY'))
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "region": "ap-southeast-1",
+    'queue_name_prefix': 'django-',
+    'visibility_timeout': 7200,
+    'polling_interval': 1
+}
+CELERY_result_backend = None
