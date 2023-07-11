@@ -3,12 +3,15 @@ import boto3
 import os
 from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = 'django-insecure-c_r6)e634dxl09@%cu@+rj%ud)5a(e&!rt_2)olr$ddnl715r!'
+SECRET_KEY =  os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -227,3 +230,15 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+CELERY_accept_content = ['application/json']
+CELERY_task_serializer = 'json'
+CELERY_TASK_DEFAULT_QUEUE = 'myqueue'
+CELERY_BROKER_URL = "sqs://%s:%s@" % (os.environ.get('AWS_ACCESS_KEY_ID'), os.environ.get('AWS_SECRET_ACCESS_KEY'))
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "region": "ap-southeast-1",
+    'queue_name_prefix': 'PriceWizQueue',
+    'visibility_timeout': 7200,
+    'polling_interval': 1
+}
+CELERY_result_backend = None
