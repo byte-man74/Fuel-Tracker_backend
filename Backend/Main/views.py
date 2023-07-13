@@ -6,10 +6,20 @@ from .forms import FuelingStationForm, LoginForm, SignupForm, FuelStationPriceFo
 from .models import Fueling_station, Fuel_Station_Position, Fuel_Station_Price
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 
+
+def redirect_if_logged_in(view_func):
+    @user_passes_test(lambda user: not user.is_authenticated, login_url='dashboard')
+    def wrapper(request, *args, **kwargs):
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+@redirect_if_logged_in
 def landing_page(request):
     return render(request, 'main/landing_page.html')
 
+@redirect_if_logged_in
 def sign_up(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
@@ -21,6 +31,7 @@ def sign_up(request):
         form = SignupForm()
     return render(request, 'main/sign_up.html', {'form': form})
 
+@redirect_if_logged_in
 def login_page(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -87,7 +98,7 @@ def edit_fuel_station_price(request, station_id):
 
 @login_required(login_url='login')
 def dashboard(request):
-    user = request.user 
+    user = request.user
     stations = Fueling_station.objects.filter(agent=user).prefetch_related('fuel_station_price')
     return render(request, 'main/dashboard.html', {'stations': stations})
 
