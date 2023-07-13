@@ -10,10 +10,10 @@ class Fueling_station(models.Model):
     background_image_url = models.CharField( max_length=200, null=True)
     local_government = models.CharField( max_length=50)
     address = models.CharField(null=True,  max_length=50)
-    opening_hours = models.CharField(null=True, max_length=50)
-    phone_number = models.CharField(max_length=200, null=True)
+    contact_information = models.CharField(null=True,  max_length=50, help_text="Please provide a valid phone number of the fuel station attendant")
+
     agent = models.ForeignKey("Auth.CustomUser",  on_delete=models.CASCADE, null=True)
-    
+
     def __str__(self):
         return self.name
 
@@ -35,9 +35,9 @@ class Fuel_Station_Price (models.Model):
     def __str__(self):
         Fuel_station_instance = self.station
         Fuel_station_name = Fuel_station_instance.name
-        
+
         return f"{Fuel_station_name} price object"
-    
+
     def save(self, *args, **kwargs):
         self.last_updated = timezone.now()
         super().save(*args, **kwargs)
@@ -103,4 +103,3 @@ class Images_on_station (models.Model):
 
     def __str__(self):
         return self.station_name + "image object"
-    

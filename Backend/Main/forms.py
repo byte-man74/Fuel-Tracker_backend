@@ -6,7 +6,7 @@ from Auth.models import CustomUser
 class FuelingStationForm(forms.ModelForm):
     class Meta:
         model = Fueling_station
-        fields = ['name', 'address', 'local_government']
+        fields = ['name', 'address', 'local_government', 'contact_information']
 
 class LoginForm(forms.Form):
     email = forms.EmailField(label='Email')
@@ -22,7 +22,7 @@ class SignupForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'password1', 'password2')
+        fields = ('email', 'first_name', 'last_name', 'password1', 'password2')
 
 class FuelStationPriceForm(forms.ModelForm):
     class Meta:
