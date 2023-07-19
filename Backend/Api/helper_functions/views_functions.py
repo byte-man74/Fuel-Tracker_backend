@@ -1,5 +1,6 @@
 import string
 import random
+import geopy
 from Main.models import Fueling_station
 from datetime import datetime, timedelta
 from rest_framework import status
@@ -7,6 +8,7 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from rest_framework.response import Response
 from Main.tasks import update_db, create_price_record
+from geopy.geocoders import Nominatim
 
 
 
@@ -184,3 +186,17 @@ def process_request_on_cache(data, cache_objects):
 
 
 '''Operations end'''
+
+
+def get_location_info(latitude, longitude):
+    geolocator = Nominatim(user_agent="geoapiExercises")
+    location = geolocator.reverse(f"{latitude}, {longitude}", exactly_one=True)
+
+    if location is not None:
+        address = location.raw['address']
+        state = address.get('state')
+        local_government = address.get('county')
+        
+        return state, local_government
+
+    return None, None
