@@ -147,8 +147,12 @@ class GetNearbyFuelingStation(APIView):
             station = Fueling_station.objects.get(id=data['id'])
             position = Fuel_Station_Position.objects.select_related(
                 'station').get(station=station)
+            price = Fuel_Station_Price.objects.get.select_related(
+                'station').get(station=station)
             fuel_station_with_location = {
-                'station': data, 'position': {"longitude": position.longitude, "latitude": position.latitude}}
+                'station': data, 'position': {"longitude": position.longitude, "latitude": position.latitude}, "price": price
+                }
+            
             fuel_stations_with_location.append(fuel_station_with_location)
 
         return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
