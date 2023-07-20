@@ -6,13 +6,14 @@ from Auth.models import CustomUser
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework import status
 from rest_framework.views import APIView
+import time
 from Main.tasks import update_votes, update_traffic_rating_count, update_vote_count, create_price_record
 from rest_framework_simplejwt.views import TokenObtainPairView
 from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
                                                   check_if_vote_key_exists,
                                                   check_vote_status,
                                                   check_cache_key_for_fuel_station_id_and_process_request,
-                                                  else_function)
+                                                  else_function, get_location_info, get_location_from_coordinates)
 from rest_framework.permissions import IsAuthenticated
 from Auth.models import UserLocation
 from rest_framework import filters
@@ -80,7 +81,7 @@ class ChangePasswordView(APIView):
         user.save()
 
         return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
-    
+
 
 '''Edit account info'''
 
@@ -215,7 +216,7 @@ class EditPriceGetOptions(APIView):
                 return response
             else:
                 return Response(status=status.HTTP_200_OK)
-            
+
             # {'vote": true, 'price': 300}
 
 '''vote for a fuel price'''
@@ -223,7 +224,7 @@ class VoteFuelStationPriceView(APIView):
     def post(self, request, fuel_station_id):
         update_votes.delay(fuel_station_id)
         return Response({'message': 'Vote added successfully'}, status=status.HTTP_200_OK)
-    
+
 
 '''Update traffic rating'''
 class UpdateTrafficRatingCountView(APIView):
@@ -260,3 +261,20 @@ def create_comment(request):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+def update_position(request):
+    stations = Fueling_station.objects.all()
+    api_key = 'Ahndh4GZR21tp2mdoH3VYktZS7HeiGs7-UYmNhOk5gD7G7kAVuY6i57lJC8wHjrL'
+
+    for station in stations:
+        position = Fuel_Station_Position.objects.get(station=station)
+        time.sleep(0.5)
+        state, local_government = get_location_from_coordinates(position.latitude, position.longitude)
+        print(local_government)
+        station.local_government = local_government
+        print("getting station")
+        station.save()
+    return Response(status=status.HTTP_201_CREATED)

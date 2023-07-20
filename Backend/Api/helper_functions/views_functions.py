@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from Main.tasks import update_db, create_price_record
 from geopy.geocoders import Nominatim
-
+import requests
 
 
 '''Helper functions'''
@@ -43,7 +43,7 @@ def get_fuel_station_id_from_cache_key(station_cache_key):
         fuel_station_id = parts[1].split("_")[0]
         print(fuel_station_id)
         return fuel_station_id
-        
+
 
     # Return None if the cache key is not in the expected format
     return None
@@ -187,7 +187,6 @@ def process_request_on_cache(data, cache_objects):
 
 '''Operations end'''
 
-
 def get_location_info(latitude, longitude):
     geolocator = Nominatim(user_agent="geoapiExercises")
     location = geolocator.reverse(f"{latitude}, {longitude}", exactly_one=True)
@@ -196,7 +195,49 @@ def get_location_info(latitude, longitude):
         address = location.raw['address']
         state = address.get('state')
         local_government = address.get('county')
-        
+
         return state, local_government
 
     return None, None
+
+
+
+def get_location_from_coordinates(latitude, longitude):
+    url = "https://maps.googleapis.com/maps/api/geocode/json"
+    params = {
+        "latlng": f"{latitude},{longitude}",
+        "key": "AIzaSyAuq2ehP_Eg3URa20A7ATtMNoNEnfWn-ww",
+        "result_type": "political",
+        "language": "en",
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("results"):
+            location = data["results"][0]
+            state = None
+            local_government = None
+
+            for address_component in location.get("address_components", []):
+                types = address_component.get("types", [])
+                if "administrative_area_level_1" in types:
+                    state = address_component["long_name"]
+                if "locality" in types or "administrative_area_level_2" in types:
+                    local_government = address_component["long_name"]
+
+            # Check if both state and local government are found, otherwise return None
+            if state and local_government:
+                return state, local_government
+            else:
+                return None, None
+        else:
+            return None, None
+    except requests.exceptions.HTTPError as http_err:
+        print(f"HTTP error occurred: {http_err}")
+        return None, None
+    except Exception as err:
+        print(f"An error occurred: {err}")
+        return None, None
