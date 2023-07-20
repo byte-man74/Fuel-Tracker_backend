@@ -295,7 +295,7 @@ def create_user_location(request):
         location_data = {
             'state': state,
             'local_government': local_government,
-            'user': user
+            'user': user.id
         }
         serializer = UserLocationSerializer(data=location_data)
         if serializer.is_valid():
