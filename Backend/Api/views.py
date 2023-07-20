@@ -6,6 +6,7 @@ from Auth.models import CustomUser
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework import status
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 import time
 from Main.tasks import update_votes, update_traffic_rating_count, update_vote_count, create_price_record
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -23,7 +24,8 @@ from .serializers import (UserSerializer,
                           FuelStationPriceSerializer,
                           FuelStationTrafficRatingSerializer,
                           FuelStationExtraInformationSerializer,
-                          FuelStationPositionSerializer)
+                          FuelStationPositionSerializer,
+                          UserLocationSerializer)
 from rest_framework.exceptions import NotFound
 from Main.models import (Fueling_station,
                          Fuel_Station_Price,
@@ -278,3 +280,27 @@ def update_position(request):
         print("getting station")
         station.save()
     return Response(status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def create_user_location(request):
+    user = request.user
+
+    # Extract state and local government based on the latitude and longitude
+    latitude = request.data.get('latitude')
+    longitude = request.data.get('longitude')
+    state, local_government = get_location_from_coordinates(latitude, longitude)
+
+    if state and local_government:
+        location_data = {
+            'state': state,
+            'local_government': local_government,
+            'user': user
+        }
+        serializer = UserLocationSerializer(data=location_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message': 'Location data not found.'}, status=status.HTTP_404_NOT_FOUND)
