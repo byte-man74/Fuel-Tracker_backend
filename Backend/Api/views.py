@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 import time
+from django.core.serializers import serialize
 from Main.tasks import update_votes, update_traffic_rating_count, update_vote_count, create_price_record
 from rest_framework_simplejwt.views import TokenObtainPairView
 from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
@@ -145,19 +146,26 @@ class GetNearbyFuelingStation(APIView):
 
         for data in serialized_data:
             station = Fueling_station.objects.get(id=data['id'])
-            position = Fuel_Station_Position.objects.select_related(
-                'station').get(station=station)
-            price = Fuel_Station_Price.objects.get.select_related(
-                'station').get(station=station)
+            position = Fuel_Station_Position.objects.select_related('station').get(station=station)
+            price = Fuel_Station_Price.objects.get(station=station)
+
+            # Create a dictionary with the required price fields
+            price_data = {
+                'amount': price.amount,
+                'last_updated': price.last_updated,
+                'votes':price.votes
+                # Add other price fields you need
+            }
+
             fuel_station_with_location = {
-                'station': data, 'position': {"longitude": position.longitude, "latitude": position.latitude}, "price": price
-                }
-            
+                'station': data,
+                'position': {"longitude": position.longitude, "latitude": position.latitude},
+                'price': price_data,
+            }
+
             fuel_stations_with_location.append(fuel_station_with_location)
 
         return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
-
-
 
 '''The ViewFuelingStationInformation is responsible for users to easily check the database and see a particular information relating to the fuel station they are interested in'''
 
