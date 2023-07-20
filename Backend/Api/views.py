@@ -117,9 +117,7 @@ class EditAccountInfoView(APIView):
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
 # todo Would pass the longitude and latitude of the station
 
-
 class GetNearbyFuelingStation(APIView):
-
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
 
@@ -149,12 +147,12 @@ class GetNearbyFuelingStation(APIView):
             station = Fueling_station.objects.get(id=data['id'])
             position = Fuel_Station_Position.objects.select_related(
                 'station').get(station=station)
-            print(position.longitude)
             fuel_station_with_location = {
                 'station': data, 'position': {"longitude": position.longitude, "latitude": position.latitude}}
             fuel_stations_with_location.append(fuel_station_with_location)
 
-        return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_station_with_location})
+        return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
+
 
 
 '''The ViewFuelingStationInformation is responsible for users to easily check the database and see a particular information relating to the fuel station they are interested in'''
