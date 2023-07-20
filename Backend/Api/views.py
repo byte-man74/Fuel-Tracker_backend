@@ -281,10 +281,17 @@ def update_position(request):
         station.save()
     return Response(status=status.HTTP_201_CREATED)
 
-
 @api_view(['POST'])
 def create_user_location(request):
     user = request.user
+
+    # Check if a UserLocation instance already exists for the current user
+    try:
+        user_location = UserLocation.objects.get(user=user)
+        # If a UserLocation instance already exists, return a 200 status code
+        return Response({'message': 'User location already exists.'}, status=status.HTTP_200_OK)
+    except UserLocation.DoesNotExist:
+        pass  # Continue with the location creation process
 
     # Extract state and local government based on the latitude and longitude
     latitude = request.data.get('latitude')
