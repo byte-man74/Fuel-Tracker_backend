@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 import time
+from googlemaps import Client
 from django.core.serializers import serialize
 from Main.tasks import update_votes, update_traffic_rating_count, update_vote_count, create_price_record
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -153,7 +154,7 @@ class GetNearbyFuelingStation(APIView):
             price_data = {
                 'amount': price.amount,
                 'last_updated': price.last_updated,
-                'votes':price.votes
+                'votes': price.votes
                 # Add other price fields you need
             }
 
@@ -170,6 +171,38 @@ class GetNearbyFuelingStation(APIView):
 '''The ViewFuelingStationInformation is responsible for users to easily check the database and see a particular information relating to the fuel station they are interested in'''
 
 
+
+@api_view(['POST'])
+def find_nearby_fueling_stations(request):
+    latitude = request.data.get('latitude')
+    longitude = request.data.get('longitude')
+
+    if not latitude or not longitude:
+        return Response({'error': 'Latitude and longitude must be provided.'}, status=400)
+
+
+    latitude = latitude
+    longitude = longitude
+
+
+    # Replace 'YOUR_GOOGLE_MAPS_API_KEY' with your actual API key
+    gmaps = Client(key='AIzaSyAuq2ehP_Eg3URa20A7ATtMNoNEnfWn-ww')
+
+    user_position = (latitude, longitude)
+    nearby_stations = []
+
+    all_stations = Fuel_Station_Position.objects.all()
+    for station_position in all_stations:
+        try:
+            station_coords = (float(station_position.latitude), float(station_position.longitude))
+        except ValueError:
+            continue  # Skip invalid station coordinates
+        distance = gmaps.distance_matrix(user_position, station_coords)['rows'][0]['elements'][0]['distance']['value']
+        if distance <= 5000:
+            nearby_stations.append(station_position.station)
+
+    serializer = FuelStationSerializer(nearby_stations, many=True)
+    return Response(serializer.data)
 class ViewFuelingStationInformation (APIView):
     # todo ......add a cache checker herre for performance
     def get(self, request, fuel_station_id):
