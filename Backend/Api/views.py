@@ -6,6 +6,7 @@ from Auth.models import CustomUser
 from rest_framework.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework import generics
 from django.shortcuts import get_object_or_404
 import time
 from googlemaps import Client
@@ -203,6 +204,8 @@ def find_nearby_fueling_stations(request):
 
     serializer = FuelStationSerializer(nearby_stations, many=True)
     return Response(serializer.data)
+
+
 class ViewFuelingStationInformation (APIView):
     # todo ......add a cache checker herre for performance
     def get(self, request, fuel_station_id):
@@ -323,6 +326,24 @@ def update_position(request):
         print("getting station")
         station.save()
     return Response(status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def FuelStationAveragePrice(request):
+    try:
+        fuel_station_prices = Fuel_Station_Price.objects.all()
+        if not fuel_station_prices:
+            return Response({'error': 'No prices found for this station.'}, status=status.HTTP_404_NOT_FOUND)
+
+        total_prices = len(fuel_station_prices)
+        total_amount = sum(price.amount for price in fuel_station_prices if price.amount is not None)
+        if total_amount == 0:
+            return Response({'avg_amount': None}, status=status.HTTP_200_OK)
+
+        average_price = total_amount / total_prices
+        return Response({'avg_amount': average_price}, status=status.HTTP_200_OK)
+    except Fuel_Station_Price.DoesNotExist:
+        return Response({'error': 'Fuel station not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
 def create_user_location(request):
