@@ -1,6 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from Api.Authentication.authentication import *
+from Api.Authentication.first_time_process import *
 from .views import *
 
 
