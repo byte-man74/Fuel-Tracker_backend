@@ -15,8 +15,6 @@ urlpatterns = [
          name='change_password'),
 
 
-
-         
     path("closest_station/", find_nearby_fueling_stations, name="closest"),
      path('save_user_location', create_user_location, name="create user location"),
     path('edit_account/', EditAccountInfoView.as_view(), name="edit_account"),
