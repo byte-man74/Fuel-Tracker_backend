@@ -186,21 +186,6 @@ def process_request_on_cache(data, cache_objects):
 
 '''Operations end'''
 
-def get_location_info(latitude, longitude):
-    geolocator = Nominatim(user_agent="geoapiExercises")
-    location = geolocator.reverse(f"{latitude}, {longitude}", exactly_one=True)
-
-    if location is not None:
-        address = location.raw['address']
-        state = address.get('state')
-        local_government = address.get('county')
-
-        return state, local_government
-
-    return None, None
-
-
-
 def get_location_from_coordinates(latitude, longitude):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {
