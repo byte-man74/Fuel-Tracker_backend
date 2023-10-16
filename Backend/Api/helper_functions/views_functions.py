@@ -11,7 +11,7 @@ import requests
 import math
 import requests
 import logging
-import os
+from django.conf import settings
 
 
 '''Helper functions'''
@@ -212,7 +212,7 @@ def extract_location_from_data(data):
 
 
 def get_location_from_coordinates(latitude, longitude):
-    GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+    GOOGLE_API_KEY = settings.GOOGLE_API_KEY
     
     if not GOOGLE_API_KEY:
         logger.error("No Google API key found.")
