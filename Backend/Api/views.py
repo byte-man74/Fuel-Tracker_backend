@@ -16,7 +16,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
                                                   check_if_vote_key_exists,
                                                   check_vote_status,
-                                                  check_cache_key_for_fuel_station_id_and_process_request,
+                                                  check_cache_key_for_fuel_station_id_and_process_request, haversine,
                                                   else_function, get_location_info, get_location_from_coordinates)
 from rest_framework.permissions import IsAuthenticated
 from Auth.models import UserLocation
@@ -34,12 +34,13 @@ from Main.models import (Fueling_station,
                          Fuel_Station_Price,
                          Fuel_Station_Traffic_Rating,
                          Fuel_Station_Position,
-                         Fuel_Station_Extra_Information)
+                         Fuel_Station_Extra_Information,
+                         FuelStationComment)
 from django.core.cache import cache
 from rest_framework.decorators import api_view
 from .serializers import FuelStationCommentSerializer
 
-'''The RegisterView is responsible for user creation account and onboarding of user '''
+'''Authentication '''
 
 
 class RegisterView(APIView):
@@ -67,10 +68,16 @@ class RegisterView(APIView):
 class EmailTokenObtainPairView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
+'''Api to get email address'''
+@api_view(['GET'])
+def GetEmailAddress (request):
+    user = request.user
+    email = user.email
+
+    data = {'email' : email}
+    return Response (data, status= status.HTTP_200_OK)
 
 '''change passsword'''
-
-
 class ChangePasswordView(APIView):
     def put(self, request):
         user = request.user
@@ -89,8 +96,6 @@ class ChangePasswordView(APIView):
 
 
 '''Edit account info'''
-
-
 class EditAccountInfoView(APIView):
     def put(self, request):
         user = request.user
@@ -117,12 +122,17 @@ class EditAccountInfoView(APIView):
         return Response({'message': 'Account information updated successfully'}, status=status.HTTP_200_OK)
 
 
+
+
+
+
 '''The GetNearbyFuelingStation API view retrieves nearby fueling stations based on the user's current onboarding location and an optional search query.'''
 # todo Would pass the longitude and latitude of the station
 
 class GetNearbyFuelingStation(APIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
+
 
     def get(self, request, *args, **kwargs):
         serializer = FuelStationSerializer()
@@ -150,6 +160,13 @@ class GetNearbyFuelingStation(APIView):
             station = Fueling_station.objects.get(id=data['id'])
             position = Fuel_Station_Position.objects.select_related('station').get(station=station)
             price = Fuel_Station_Price.objects.get(station=station)
+            traffic = Fuel_Station_Traffic_Rating.objects.get(station=station)
+            has_voted = False
+
+
+            users = price.get_voted_users()
+            if request.user in users:
+                has_voted = True
 
             # Create a dictionary with the required price fields
             price_data = {
@@ -158,20 +175,29 @@ class GetNearbyFuelingStation(APIView):
                 'votes': price.votes
                 # Add other price fields you need
             }
+            traffic_data = {
+                'terrible' : traffic.terrible_rating_count,
+                'average' : traffic.average_rating_count,
+                'good' : traffic.good_rating_count
+            }
 
             fuel_station_with_location = {
                 'station': data,
                 'position': {"longitude": position.longitude, "latitude": position.latitude},
                 'price': price_data,
+                'traffic' : traffic_data,
+                'has_voted' : has_voted
             }
 
             fuel_stations_with_location.append(fuel_station_with_location)
 
-        return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
+        return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location[:10]})
 
 '''The ViewFuelingStationInformation is responsible for users to easily check the database and see a particular information relating to the fuel station they are interested in'''
 
 
+
+'''station information and processing'''
 
 @api_view(['POST'])
 def find_nearby_fueling_stations(request):
@@ -181,15 +207,8 @@ def find_nearby_fueling_stations(request):
     if not latitude or not longitude:
         return Response({'error': 'Latitude and longitude must be provided.'}, status=400)
 
-
-    latitude = latitude
-    longitude = longitude
-
-
-    # Replace 'YOUR_GOOGLE_MAPS_API_KEY' with your actual API key
-    gmaps = Client(key='AIzaSyAuq2ehP_Eg3URa20A7ATtMNoNEnfWn-ww')
-
-    user_position = (latitude, longitude)
+    user_position = (float(latitude), float(longitude))
+    has_voted = False
     nearby_stations = []
 
     all_stations = Fuel_Station_Position.objects.all()
@@ -198,14 +217,57 @@ def find_nearby_fueling_stations(request):
             station_coords = (float(station_position.latitude), float(station_position.longitude))
         except ValueError:
             continue  # Skip invalid station coordinates
-        distance = gmaps.distance_matrix(user_position, station_coords)['rows'][0]['elements'][0]['distance']['value']
-        if distance <= 5000:
+
+        distance = haversine(user_position[0], user_position[1], station_coords[0], station_coords[1])
+        if distance <= 10.5:  # 500 meters in kilometers
             nearby_stations.append(station_position.station)
 
     serializer = FuelStationSerializer(nearby_stations, many=True)
-    return Response(serializer.data)
+    serialized_data = serializer.data
+
+    fuel_stations_with_location = []
+
+#there is a bottleneck here sha😭
+    for data in serialized_data:
+        station = Fueling_station.objects.get(id=data['id'])
+        position = Fuel_Station_Position.objects.select_related('station').get(station=station)
+        price = Fuel_Station_Price.objects.get(station=station)
+        traffic = Fuel_Station_Traffic_Rating.objects.get(station=station)
+
+        users = price.get_voted_users()
+
+        if request.user in users:
+            has_voted = True
 
 
+        price_data = {
+            'amount': price.amount,
+            'last_updated': price.last_updated,
+            'votes': price.votes
+                # Add other price fields you need
+        }
+        traffic_data = {
+            'terrible' : traffic.terrible_rating_count,
+            'average' : traffic.average_rating_count,
+            'good' : traffic.good_rating_count
+        }
+
+        fuel_station_with_location = {
+            'station': data,
+            'position': {"longitude": position.longitude, "latitude": position.latitude},
+            'price': price_data,
+            'traffic' : traffic_data,
+            'has_voted' : has_voted
+        }
+
+        fuel_stations_with_location.append(fuel_station_with_location)
+
+    return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
+
+
+
+
+#api to get a fueling station information
 class ViewFuelingStationInformation (APIView):
     # todo ......add a cache checker herre for performance
     def get(self, request, fuel_station_id):
@@ -221,19 +283,26 @@ class ViewFuelingStationInformation (APIView):
         extra_information = Fuel_Station_Extra_Information.objects.select_related(
             'station').get(station=station)
 
+        users = price.get_voted_users()
+        has_voted = False
+        if request.user in users:
+            has_voted = True
+
+
         # Create a dictionary to hold the serialized data
         serialized_data = {
             'station': FuelStationSerializer(station).data,
             'price': FuelStationPriceSerializer(price).data,
             'traffic_rating': FuelStationTrafficRatingSerializer(traffic_rating).data,
             'extra_information': FuelStationExtraInformationSerializer(extra_information).data,
+            'has_voted': has_voted
         }
 
         return Response(serialized_data)
 
 
 
-
+#api to edit price of a fueling station
 class EditPriceGetOptions(APIView):
     def get(self, request, fuel_station_id):
         station_cache_key = return_fuel_station_cache_key(fuel_station_id)
@@ -267,11 +336,29 @@ class EditPriceGetOptions(APIView):
 
             # {'vote": true, 'price': 300}
 
+
+
 '''vote for a fuel price'''
 class VoteFuelStationPriceView(APIView):
-    def post(self, request, fuel_station_id):
-        update_votes.delay(fuel_station_id)
-        return Response({'message': 'Vote added successfully'}, status=status.HTTP_200_OK)
+    def get(self, request, price_id):
+        try:
+            price = Fuel_Station_Price.objects.get(id=price_id)
+        except Fuel_Station_Price.DoesNotExist:
+            return Response({'result': 'Price not found'}, status=404)
+
+        # Check if the user has already voted for this price
+        if request.user in price.get_voted_users():
+            return Response({'result': 'User has already voted for this price'}, status=200)
+
+        # Add the user to the list of voted users
+        price.voted_users.add(request.user)
+
+        # Increment the votes count (if needed)
+        price.votes += 1
+        price.save()
+
+        return Response({'result': 'Vote recorded successfully'}, status=200)
+
 
 
 '''Update traffic rating'''
@@ -280,17 +367,18 @@ class UpdateTrafficRatingCountView(APIView):
         rating_type = request.data.get('rating_type')
 
         # Trigger the Celery task asynchronously
-        update_traffic_rating_count.delay(fuel_station_id, rating_type)
+        update_traffic_rating_count(fuel_station_id, rating_type)
 
         return Response({'message': 'Rating count update task has been scheduled'}, status=status.HTTP_200_OK)
 
 
+#api to upvote price
 class UpdateVoteCountOpenCLoseView(APIView):
     def post(self, request, fuel_station_id):
         vote_type = request.data.get('vote_type')
 
         # Trigger the Celery task asynchronously
-        update_vote_count.delay(fuel_station_id, vote_type)
+        update_vote_count(fuel_station_id, vote_type)
 
         return Response({'message': 'Vote count update task has been scheduled'}, status=status.HTTP_200_OK)
 
@@ -298,24 +386,23 @@ class UpdateVoteCountOpenCLoseView(APIView):
 
 
 
-# todo
-
-# Assuming you have Django and Django Rest Framework installed and configured
-
+# api to comment
 @api_view(['POST'])
-def create_comment(request):
+def create_comment(request, station_id):
+    station = Fueling_station.objects.get(id=station_id)
     serializer = FuelStationCommentSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        serializer.save(user_email=request.user.email, station=station)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
+#api to add state and local government to the stations
 @api_view(['GET'])
 def update_position(request):
     stations = Fueling_station.objects.all()
-    api_key = 'Ahndh4GZR21tp2mdoH3VYktZS7HeiGs7-UYmNhOk5gD7G7kAVuY6i57lJC8wHjrL'
+    # api_key = 'Ahndh4GZR21tp2mdoH3VYktZS7HeiGs7-UYmNhOk5gD7G7kAVuY6i57lJC8wHjrL'
 
     for station in stations:
         position = Fuel_Station_Position.objects.get(station=station)
@@ -328,6 +415,7 @@ def update_position(request):
     return Response(status=status.HTTP_201_CREATED)
 
 
+#api to get the average price of a fueling stattion would turn it to a scheduled task later
 @api_view(['GET'])
 def FuelStationAveragePrice(request):
     try:
@@ -345,6 +433,18 @@ def FuelStationAveragePrice(request):
     except Fuel_Station_Price.DoesNotExist:
         return Response({'error': 'Fuel station not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+#get current station price
+@api_view(['GET'])
+def get_current_price(request, station_id):
+    try:
+        price = Fuel_Station_Price.objects.get(station=station_id)
+        serializer = FuelStationPriceSerializer(price)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Fuel_Station_Price.DoesNotExist:
+        return Response({'error': 'Price for the station not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+#api to give the user a state and a local government
 @api_view(['POST'])
 def create_user_location(request):
     user = request.user
@@ -375,3 +475,16 @@ def create_user_location(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'message': 'Location data not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+def get_comments(request, station_id):
+    comments = FuelStationComment.objects.filter(station=station_id).order_by('-date_time_commented')[:5]
+    if not comments:
+        return Response({'error': 'No comments found for the station.'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = FuelStationCommentSerializer(comments, many=True)
+    return Response({'comments': serializer.data}, status=status.HTTP_200_OK)
+
+
+
