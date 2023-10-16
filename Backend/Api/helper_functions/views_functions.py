@@ -1,6 +1,5 @@
 import string
 import random
-import geopy
 from Main.models import Fueling_station
 from datetime import datetime, timedelta
 from rest_framework import status
@@ -8,8 +7,8 @@ from django.core.cache import cache
 from django.http import HttpResponse
 from rest_framework.response import Response
 from Main.tasks import update_db, create_price_record
-from geopy.geocoders import Nominatim
 import requests
+import math
 
 
 '''Helper functions'''
@@ -98,7 +97,7 @@ def delete_least_engaged_object(cache_object):
 def update_db_from_cache(cache_dictionary, station_cache_id):
     fuel_station_id = get_fuel_station_id_from_cache_key(station_cache_id)
     update_db.delay(cache_dictionary, fuel_station_id)
-    create_price_record.delay(cache_dictionary, fuel_station_id)
+    create_price_record(cache_dictionary, fuel_station_id)
     cache.delete(station_cache_id)
 
 
@@ -206,7 +205,7 @@ def get_location_from_coordinates(latitude, longitude):
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {
         "latlng": f"{latitude},{longitude}",
-        "key": "AIzaSyAuq2ehP_Eg3URa20A7ATtMNoNEnfWn-ww",
+        "key": "AIzaSyCnIx1hokAk81uKGBM0d_S1GAqWpytvpOk",
         "result_type": "political",
         "language": "en",
     }
@@ -232,8 +231,10 @@ def get_location_from_coordinates(latitude, longitude):
             if state and local_government:
                 return state, local_government
             else:
+                print(data)
                 return None, None
         else:
+            print(data)
             return None, None
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
@@ -241,3 +242,23 @@ def get_location_from_coordinates(latitude, longitude):
     except Exception as err:
         print(f"An error occurred: {err}")
         return None, None
+
+
+
+
+def haversine(lat1, lon1, lat2, lon2):
+    # Convert latitude and longitude from degrees to radians
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+
+    # Haversine formula
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
+    a = math.sin(dlat/2) ** 2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon/2) ** 2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    earth_radius_km = 6371.0
+    distance_km = earth_radius_km * c
+
+    return distance_km

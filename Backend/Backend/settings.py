@@ -230,14 +230,6 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
-CELERY_accept_content = ['application/json']
-CELERY_task_serializer = 'json'
-CELERY_TASK_DEFAULT_QUEUE = 'myqueue'
-CELERY_BROKER_URL = "sqs://%s:%s@" % ("AKIAUODQZ6U7OTZERCO2", "HwdxMW0Rq3iolUt/CF0dm3EHGg+N7B6oqRuzeHG/")
-CELERY_BROKER_TRANSPORT_OPTIONS = {
-    "region": "ap-southeast-1",
-    'queue_name_prefix': 'PriceWizQueue',
-    'visibility_timeout': 7200,
-    'polling_interval': 1
-}
-CELERY_result_backend = None
+
+CELERY_BROKER_URL = "redis://default:NZpAOkwbhMeiihHhDICi@containers-us-west-90.railway.app:7278"
+CELERY_RESULT_BACKEND = "redis://default:NZpAOkwbhMeiihHhDICi@containers-us-west-90.railway.app:7278"
