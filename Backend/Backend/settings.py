@@ -4,13 +4,14 @@ import os
 from datetime import timedelta
 from pathlib import Path
 import os
+from decouple import config
 
 
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = "django-insecure-c_r6)e634dxl09@%cu@+rj%ud)5a(e&!rt_2)olr$ddnl715r!"
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -233,3 +234,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
 CELERY_BROKER_URL = "redis://default:NZpAOkwbhMeiihHhDICi@containers-us-west-90.railway.app:7278"
 CELERY_RESULT_BACKEND = "redis://default:NZpAOkwbhMeiihHhDICi@containers-us-west-90.railway.app:7278"
+
+
+
