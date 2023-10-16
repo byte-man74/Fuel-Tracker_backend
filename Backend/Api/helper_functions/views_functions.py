@@ -9,6 +9,9 @@ from rest_framework.response import Response
 from Main.tasks import update_db, create_price_record
 import requests
 import math
+import requests
+import logging
+import os
 
 
 '''Helper functions'''
@@ -186,11 +189,39 @@ def process_request_on_cache(data, cache_objects):
 
 '''Operations end'''
 
+# Set up the logging configuration
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
+
+def extract_location_from_data(data):
+    if not data.get("results"):
+        return None, None
+
+    location = data["results"][0]
+    state, local_government = None, None
+
+    for address_component in location.get("address_components", []):
+        types = address_component.get("types", [])
+        if "administrative_area_level_1" in types:
+            state = address_component["long_name"]
+        if "locality" in types or "administrative_area_level_2" in types:
+            local_government = address_component["long_name"]
+
+    return state, local_government
+
+
+
 def get_location_from_coordinates(latitude, longitude):
+    GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+    
+    if not GOOGLE_API_KEY:
+        logger.error("No Google API key found.")
+        return None, None
+
     url = "https://maps.googleapis.com/maps/api/geocode/json"
     params = {
         "latlng": f"{latitude},{longitude}",
-        "key": "AIzaSyCnIx1hokAk81uKGBM0d_S1GAqWpytvpOk",
+        "key": GOOGLE_API_KEY,
         "result_type": "political",
         "language": "en",
     }
@@ -198,36 +229,15 @@ def get_location_from_coordinates(latitude, longitude):
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()
-        data = response.json()
-
-        if data.get("results"):
-            location = data["results"][0]
-            state = None
-            local_government = None
-
-            for address_component in location.get("address_components", []):
-                types = address_component.get("types", [])
-                if "administrative_area_level_1" in types:
-                    state = address_component["long_name"]
-                if "locality" in types or "administrative_area_level_2" in types:
-                    local_government = address_component["long_name"]
-
-            # Check if both state and local government are found, otherwise return None
-            if state and local_government:
-                return state, local_government
-            else:
-                print(data)
-                return None, None
-        else:
-            print(data)
-            return None, None
+        state, local_government = extract_location_from_data(response.json())
+        if state and local_government:
+            return state, local_government
     except requests.exceptions.HTTPError as http_err:
-        print(f"HTTP error occurred: {http_err}")
-        return None, None
+        logger.error(f"HTTP error occurred: {http_err}")
     except Exception as err:
-        print(f"An error occurred: {err}")
-        return None, None
+        logger.error(f"An error occurred: {err}")
 
+    return None, None
 
 
 
