@@ -13,29 +13,13 @@ from googlemaps import Client
 from django.core.serializers import serialize
 from Main.tasks import update_votes, update_traffic_rating_count, update_vote_count, create_price_record
 from rest_framework_simplejwt.views import TokenObtainPairView
-from Api.helper_functions.views_functions import (return_fuel_station_cache_key,
-                                                  check_if_vote_key_exists,
-                                                  check_vote_status,
-                                                  check_cache_key_for_fuel_station_id_and_process_request, haversine,
-                                                  else_function, get_location_info, get_location_from_coordinates)
+from Api.helper_functions.views_functions import *
 from rest_framework.permissions import IsAuthenticated
 from Auth.models import UserLocation
 from rest_framework import filters
-from .serializers import (UserSerializer,
-                          TokenObtainPairSerializer,
-                          FuelStationSerializer,
-                          FuelStationPriceSerializer,
-                          FuelStationTrafficRatingSerializer,
-                          FuelStationExtraInformationSerializer,
-                          FuelStationPositionSerializer,
-                          UserLocationSerializer)
+from .serializers import *
 from rest_framework.exceptions import NotFound
-from Main.models import (Fueling_station,
-                         Fuel_Station_Price,
-                         Fuel_Station_Traffic_Rating,
-                         Fuel_Station_Position,
-                         Fuel_Station_Extra_Information,
-                         FuelStationComment)
+from Main.models import *
 from django.core.cache import cache
 from rest_framework.decorators import api_view
 from .serializers import FuelStationCommentSerializer
