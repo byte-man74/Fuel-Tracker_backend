@@ -41,4 +41,6 @@ urlpatterns = [
 
      #analytic tool
      path('admin/get_all_stations/', get_all_the_stations, name="get_all_stations_admin"),
+     path('admin/get_all_state_available/', get_all_station_state, name="get_all_state_available_admin"),
+     path('admin/get_all_lga_available/',  get_all_station_lga, name="get_all_lga_available_admin"),
 ]
