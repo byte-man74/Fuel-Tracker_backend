@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 from Api.Authentication.authentication import *
 from Api.Authentication.first_time_process import *
+from Api.Application_api.main import *
 from .views import *
 
 
@@ -14,14 +15,18 @@ urlpatterns = [
          name='token_obtain_pair'),
     path('change-password/', ChangePasswordView.as_view(),
          name='change_password'),
+     path('edit_account/', EditAccountInfoView.as_view(), name="edit_account"),
 
-
-    path("closest_station/", find_nearby_fueling_stations, name="closest"),
+     #application api
+     path("closest_station/", find_nearby_fueling_stations, name="closest"),
      path('save_user_location', create_user_location, name="create user location"),
-    path('edit_account/', EditAccountInfoView.as_view(), name="edit_account"),
+
+
+     
+    
     path('stations_average_price/', FuelStationAveragePrice, name='fuel-station-average-price'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('get_nearby_fueling_stations/', GetNearbyFuelingStation.as_view(),
+    path('get_nearby_fueling_stations/', GetSavedFuelingStation.as_view(),
          name='get-nearby-fueling-stations'),
     path('view_fueling_station_info/<int:fuel_station_id>/',
          ViewFuelingStationInformation.as_view(), name='view-fueling-station-info'),
