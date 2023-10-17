@@ -21,11 +21,10 @@ from rest_framework.exceptions import NotFound
 from Main.models import *
 from django.core.cache import cache
 from rest_framework.decorators import api_view
-from .serializers import FuelStationCommentSerializer
 
 
 
-class GetNearbyFuelingStation(APIView):
+class GetSavedFuelingStation(APIView):
     permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
 
@@ -88,77 +87,6 @@ class GetNearbyFuelingStation(APIView):
             fuel_stations_with_location.append(fuel_station_with_location)
 
         return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location[:10]})
-
-'''The ViewFuelingStationInformation is responsible for users to easily check the database and see a particular information relating to the fuel station they are interested in'''
-
-
-
-'''station information and processing'''
-
-@api_view(['POST'])
-def find_nearby_fueling_stations(request):
-    latitude = request.data.get('latitude')
-    longitude = request.data.get('longitude')
-
-    if not latitude or not longitude:
-        return Response({'error': 'Latitude and longitude must be provided.'}, status=400)
-
-    user_position = (float(latitude), float(longitude))
-    has_voted = False
-    nearby_stations = []
-
-    all_stations = Fuel_Station_Position.objects.all()
-    for station_position in all_stations:
-        try:
-            station_coords = (float(station_position.latitude), float(station_position.longitude))
-        except ValueError:
-            continue  # Skip invalid station coordinates
-
-        distance = haversine(user_position[0], user_position[1], station_coords[0], station_coords[1])
-        if distance <= 10.5:  # 500 meters in kilometers
-            nearby_stations.append(station_position.station)
-
-    serializer = FuelStationSerializer(nearby_stations, many=True)
-    serialized_data = serializer.data
-
-    fuel_stations_with_location = []
-
-#there is a bottleneck here sha😭
-    for data in serialized_data:
-        station = Fueling_station.objects.get(id=data['id'])
-        position = Fuel_Station_Position.objects.select_related('station').get(station=station)
-        price = Fuel_Station_Price.objects.get(station=station)
-        traffic = Fuel_Station_Traffic_Rating.objects.get(station=station)
-
-        users = price.get_voted_users()
-
-        if request.user in users:
-            has_voted = True
-
-
-        price_data = {
-            'amount': price.amount,
-            'last_updated': price.last_updated,
-            'votes': price.votes
-                # Add other price fields you need
-        }
-        traffic_data = {
-            'terrible' : traffic.terrible_rating_count,
-            'average' : traffic.average_rating_count,
-            'good' : traffic.good_rating_count
-        }
-
-        fuel_station_with_location = {
-            'station': data,
-            'position': {"longitude": position.longitude, "latitude": position.latitude},
-            'price': price_data,
-            'traffic' : traffic_data,
-            'has_voted' : has_voted
-        }
-
-        fuel_stations_with_location.append(fuel_station_with_location)
-
-    return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
 
 
 
