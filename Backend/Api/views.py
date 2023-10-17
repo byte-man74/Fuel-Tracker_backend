@@ -24,69 +24,6 @@ from rest_framework.decorators import api_view
 
 
 
-class GetSavedFuelingStation(APIView):
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter]
-
-
-    def get(self, request, *args, **kwargs):
-        serializer = FuelStationSerializer()
-        search_query = request.query_params.get('search')
-
-        # Get user's current onboarding location
-        user = request.user
-        user_location = UserLocation.objects.select_related(
-            'user').get(user=user)
-
-        fueling_stations = Fueling_station.objects.filter(
-            local_government=user_location.local_government)
-
-        # Filter fueling stations within the range of the user's location
-        if search_query:
-            fueling_stations = fueling_stations.filter(
-                name__icontains=search_query)
-
-        serializer = FuelStationSerializer(fueling_stations, many=True)
-        serialized_data = serializer.data
-
-        fuel_stations_with_location = []
-
-        for data in serialized_data:
-            station = Fueling_station.objects.get(id=data['id'])
-            position = Fuel_Station_Position.objects.select_related('station').get(station=station)
-            price = Fuel_Station_Price.objects.get(station=station)
-            traffic = Fuel_Station_Traffic_Rating.objects.get(station=station)
-            has_voted = False
-
-
-            users = price.get_voted_users()
-            if request.user in users:
-                has_voted = True
-
-            # Create a dictionary with the required price fields
-            price_data = {
-                'amount': price.amount,
-                'last_updated': price.last_updated,
-                'votes': price.votes
-                # Add other price fields you need
-            }
-            traffic_data = {
-                'terrible' : traffic.terrible_rating_count,
-                'average' : traffic.average_rating_count,
-                'good' : traffic.good_rating_count
-            }
-
-            fuel_station_with_location = {
-                'station': data,
-                'position': {"longitude": position.longitude, "latitude": position.latitude},
-                'price': price_data,
-                'traffic' : traffic_data,
-                'has_voted' : has_voted
-            }
-
-            fuel_stations_with_location.append(fuel_station_with_location)
-
-        return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location[:10]})
 
 
 

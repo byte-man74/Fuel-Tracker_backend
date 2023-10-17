@@ -25,10 +25,7 @@ from Api.serializers import *
 
 
 
-'''The ViewFuelingStationInformation is responsible for users 
-to easily check the database and see a particular information 
-relating to the fuel station they are interested in'''
-
+'''This api returns station based on the users longitude and latitude'''
 @api_view(['POST'])
 def find_nearby_fueling_stations(request):
     latitude = request.data.get('latitude')
@@ -53,5 +50,24 @@ def find_nearby_fueling_stations(request):
 
 
 
+'''This api returns station based on the users saved local government'''
+@api_view(['GET'])
+def get_saved_stations (request):
+
+    # Get user's current onboarding location
+    user = request.user
+    user_location = UserLocation.objects.select_related(
+        'user').get(user=user)
+
+    fueling_stations = Fueling_station.objects.filter(
+        local_government=user_location.local_government)
+
+
+    serializer = FuelStationSerializer(fueling_stations, many=True)
+    serialized_data = serializer.data
+    fuel_stations_with_location = add_fuel_station_to_location(serialized_data, user)
+
+
+    return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
 
 
