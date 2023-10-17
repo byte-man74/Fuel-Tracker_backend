@@ -6,7 +6,9 @@ DAY_DURATION = 24 * 60 * 60
 CACHE_KEY = 'all_fueling_station'
 
 def check_if_fueling_station_is_in_cache ():
-    cache_object = cache.get("fueling_station")
+    cache_object = cache.get("all_fueling_station")
+    print(cache_object)
+    print("excuse me")
 
     if cache_object is None:
         stations = cache_and_return_fueling_stations()
@@ -114,22 +116,23 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 
-def add_fuel_station_to_location(serialized_data, user):
+def add_fuel_station_to_location(serialized_data, user=None):
     fuel_stations_with_location = []
     has_voted = False
     
 
-
     for data in serialized_data:
         station = Fueling_station.objects.get(id=data['id'])
+        
 
         #redis cache here too
-        position = Fuel_Station_Position.objects.select_related('station').get(station=station)
-        price = Fuel_Station_Price.objects.get(station=station)
-        traffic = Fuel_Station_Traffic_Rating.objects.get(station=station)
+        position = Fuel_Station_Position.objects.select_related('station').get(station=station.id)
+        price = Fuel_Station_Price.objects.get(station=station.id)
+        traffic = Fuel_Station_Traffic_Rating.objects.get(station=station.id)
 
         users = price.get_voted_users()
-        if user in users:
+
+        if user in users and user is not None:
             has_voted = True
 
 
@@ -154,3 +157,5 @@ def add_fuel_station_to_location(serialized_data, user):
         }
 
         fuel_stations_with_location.append(fuel_station_with_location)
+
+    return fuel_station_with_location

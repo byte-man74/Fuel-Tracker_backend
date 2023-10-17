@@ -2,20 +2,24 @@ from Api.Application_api.helper_function.main_function_support import *
 from Api.serializers import *
 from rest_framework.response import Response
 from rest_framework.status import *
+from rest_framework.decorators import api_view
 
 
-
-
+@api_view(['GET'])
 def get_all_the_stations (request):
     all_stations = check_if_fueling_station_is_in_cache()
     serializer = FuelStationSerializer(all_stations, many=True)
     serialized_data = serializer.data
-    fuel_stations_with_location = add_fuel_station_to_location(serialized_data)
+    print("data processed")
 
-    return Response(status=HTTP_200_OK, data={'fueling_stations': fuel_stations_with_location})
+    fuel_stations_with_location = add_fuel_station_to_location(serialized_data, user=None)
+    print("data processed on t")
+    print(fuel_stations_with_location[:10])
+    return Response({"data": fuel_stations_with_location}, status=HTTP_200_OK)
 
 
 #api to get all the state for fuel stations
+@api_view(['GET'])
 def get_all_station_state(request):
     """
     Fetch all stations and return a list of unique states.
@@ -31,6 +35,7 @@ def get_all_station_state(request):
 
 
 #api to get all the lga for fuel stations
+@api_view(['GET'])
 def get_all_station_lga(request):
     """
     Fetch all stations and return a list of unique states.

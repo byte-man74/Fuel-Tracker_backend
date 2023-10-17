@@ -97,10 +97,11 @@ DATABASES = {
 }
 
 #caches
+#caches
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://default:PEAKCFJA9wkQqIz1Mdqb@containers-us-west-18.railway.app:5816",
+        "LOCATION": "redis://default:NZpAOkwbhMeiihHhDICi@containers-us-west-90.railway.app:7278",
     }
 }
 
