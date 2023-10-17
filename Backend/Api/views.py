@@ -328,6 +328,8 @@ def FuelStationAveragePrice(request):
         return Response({'avg_amount': average_price}, status=status.HTTP_200_OK)
     except Fuel_Station_Price.DoesNotExist:
         return Response({'error': 'Fuel station not found.'}, status=status.HTTP_404_NOT_FOUND)
+    
+    
 
 #get current station price
 @api_view(['GET'])
