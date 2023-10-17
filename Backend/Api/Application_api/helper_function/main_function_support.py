@@ -1,7 +1,9 @@
 from django.core.cache import cache
 from Main.models import *
 import math
-
+# Constants
+DAY_DURATION = 24 * 60 * 60
+CACHE_KEY = 'all_fueling_station'
 
 def check_if_fueling_station_is_in_cache ():
     cache_object = cache.get("fueling_station")
@@ -34,6 +36,62 @@ def process_station_fueling_by_distance (all_stations, user_position):
         if distance <= 10.5:  # 500 meters in kilometers
             nearby_stations.append(station_position.station)
 
+
+
+
+def check_if_state_cache_exist ():
+    state_available = cache.get("state_available")
+    if state_available is None:
+        states = cache_and_return_state()
+        return states
+    return state_available
+
+
+def cache_and_return_state():
+    DAY_DURATION = 24 * 60 * 60 
+    all_stations = check_if_fueling_station_is_in_cache()
+
+    # Check if all_stations is iterable, if not return an error response or handle it appropriately
+    if all_stations is None:
+        return None
+
+    state_set = set()  # Using a set for better performance in membership checks
+    for station in all_stations:
+        state_set.add(station.state)
+
+    cache.set('all_fueling_station', list(state_set), DAY_DURATION)
+    return list(state_set)
+
+
+
+
+
+'''local government'''
+def get_cached_local_governments():
+    """
+    Check if cached local governments exist. If not, cache and return them.
+    """
+    lga_available = cache.get(CACHE_KEY)
+
+    if lga_available is None:
+        lga_available = cache_and_return_lga()
+    
+    return lga_available
+
+def cache_and_return_lga():
+    """
+    Cache the list of unique local governments from fueling stations and return it.
+    """
+    all_stations = check_if_fueling_station_is_in_cache()
+
+    # Check if all_stations is iterable, if not, return None.
+    if all_stations is None:
+        return None
+
+    lga_set = {station.local_government for station in all_stations}  # Using set comprehension
+
+    cache.set(CACHE_KEY, list(lga_set), DAY_DURATION)
+    return list(lga_set)
 
 
 def haversine(lat1, lon1, lat2, lon2):
