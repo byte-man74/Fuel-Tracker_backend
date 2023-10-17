@@ -30,7 +30,6 @@ def get_all_station_state(request):
 
 
 
-
 #api to get all the lga for fuel stations
 def get_all_station_lga(request):
     """

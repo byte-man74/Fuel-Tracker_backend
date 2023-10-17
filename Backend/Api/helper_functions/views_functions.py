@@ -215,7 +215,7 @@ def extract_location_from_data(data):
 
 
 def get_location_from_coordinates(latitude, longitude):
-    GOOGLE_API_KEY = settings.GOOGLE_API_KEY
+    GOOGLE_API_KEY = "AIzaSyBP6dRPyFctOHxbZMli7z7kmdxqH2GwPgI"
     
     if not GOOGLE_API_KEY:
         logger.error("No Google API key found.")
