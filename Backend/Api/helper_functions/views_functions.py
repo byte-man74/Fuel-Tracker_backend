@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from Main.tasks import update_db, create_price_record
 import requests
-
 import requests
 import logging
 from django.conf import settings
@@ -18,6 +17,8 @@ from django.conf import settings
 def return_fuel_station_cache_key(id):
     try:
         station = Fueling_station.objects.only('name').get(id=id)
+
+
         # Generate a cache-safe key by removing invalid characters
         safe_name = "".join(c for c in station.name if c.isalnum())
         return f"{safe_name}_ID_{id}_cache_key"
@@ -109,6 +110,7 @@ def process_vote_request(price_value, cache_object, station_cache_key, data):
     cache_key = find_key_by_value(cache_object, price_value)
     if cache_key is not None:
         cache_object[cache_key]['votes'] += 1
+
         #todo fire a function here
         if cache_object[cache_key]['votes'] >= 4:
             update_db_from_cache(cache_object[cache_key], station_cache_key)
@@ -139,6 +141,7 @@ def check_cache_key_for_fuel_station_id_and_process_request(data, fuel_station_i
 
 def else_function(station_cache_key, data):
     cache_object = cache.get(station_cache_key)
+
     if cache_object is not None:
         num_keys = len(cache_object)
 

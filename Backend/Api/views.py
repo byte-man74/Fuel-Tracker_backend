@@ -28,72 +28,8 @@ from rest_framework.decorators import api_view
 
 
 
-#api to get a fueling station information
-class ViewFuelingStationInformation (APIView):
-    # todo ......add a cache checker herre for performance
-    def get(self, request, fuel_station_id):
-        try:
-            station = Fueling_station.objects.get(id=fuel_station_id)
-        except Fueling_station.DoesNotExist:
-            raise NotFound("Fueling station does not exist.")
-
-        price = Fuel_Station_Price.objects.select_related(
-            'station').get(station=station)
-        traffic_rating = Fuel_Station_Traffic_Rating.objects.select_related(
-            'station').get(station=station)
-        extra_information = Fuel_Station_Extra_Information.objects.select_related(
-            'station').get(station=station)
-
-        users = price.get_voted_users()
-        has_voted = False
-        if request.user in users:
-            has_voted = True
 
 
-        # Create a dictionary to hold the serialized data
-        serialized_data = {
-            'station': FuelStationSerializer(station).data,
-            'price': FuelStationPriceSerializer(price).data,
-            'traffic_rating': FuelStationTrafficRatingSerializer(traffic_rating).data,
-            'extra_information': FuelStationExtraInformationSerializer(extra_information).data,
-            'has_voted': has_voted
-        }
-
-        return Response(serialized_data)
-
-
-
-#api to edit price of a fueling station
-class EditPriceGetOptions(APIView):
-    def get(self, request, fuel_station_id):
-        station_cache_key = return_fuel_station_cache_key(fuel_station_id)
-        cache_object = cache.get(station_cache_key)
-
-        if cache_object is not None:
-            return Response(data={'cache_object': cache_object}, status=status.HTTP_200_OK)
-        else:
-            return Response(data={'details': 'no options'}, status=status.HTTP_204_NO_CONTENT)
-
-    def post(self, request, fuel_station_id):
-        station_cache_key = return_fuel_station_cache_key(fuel_station_id)
-        data = request.data
-        vote_validation = check_if_vote_key_exists(data)
-
-        if not vote_validation:
-            raise ValueError("Vote key 'value' does not exist in the data.")
-
-        vote_status = check_vote_status(data)
-
-        if vote_status:
-            check_cache_key_for_fuel_station_id_and_process_request(
-                data, fuel_station_id)
-            return Response(status=status.HTTP_200_OK)
-        else:
-            response = else_function(station_cache_key, data)
-            if response is not None:
-                return response
-            else:
-                return Response(status=status.HTTP_200_OK)
 
             # {'vote": true, 'price': 300}
 
