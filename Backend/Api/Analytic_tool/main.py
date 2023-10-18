@@ -3,18 +3,26 @@ from Api.serializers import *
 from rest_framework.response import Response
 from rest_framework.status import *
 from rest_framework.decorators import api_view
-
+from rest_framework.pagination import PageNumberPagination
 
 @api_view(['GET'])
 def get_all_the_stations (request):
     all_stations = check_if_fueling_station_is_in_cache()
-    serializer = FuelStationSerializer(all_stations, many=True)
+
+    paginator = PageNumberPagination()
+    paginator.page_size = 7
+
+    paginated_result = paginator.paginate_queryset(all_stations, request)
+
+
+    serializer = FuelStationSerializer(paginated_result, many=True)
+
+
     serialized_data = serializer.data
     print("data processed")
 
     fuel_stations_with_location = add_fuel_station_to_location(serialized_data, user=None)
     print("data processed on t")
-    print(fuel_stations_with_location[:10])
     return Response({"data": fuel_stations_with_location}, status=HTTP_200_OK)
 
 
@@ -41,7 +49,6 @@ def get_all_station_lga(request):
     Fetch all stations and return a list of unique states.
     """
     lga_available = get_cached_local_governments()
-    print(lga_available)
 
     # Check if all_stations is iterable, if not return an error response or handle it appropriately
     if lga_available is None:
