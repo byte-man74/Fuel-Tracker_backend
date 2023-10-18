@@ -41,6 +41,7 @@ def get_all_station_lga(request):
     Fetch all stations and return a list of unique states.
     """
     lga_available = get_cached_local_governments()
+    print(lga_available)
 
     # Check if all_stations is iterable, if not return an error response or handle it appropriately
     if lga_available is None:

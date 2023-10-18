@@ -73,7 +73,7 @@ def get_cached_local_governments():
     """
     Check if cached local governments exist. If not, cache and return them.
     """
-    lga_available = cache.get(CACHE_KEY)
+    lga_available = cache.get("all_lga")
 
     if lga_available is None:
         lga_available = cache_and_return_lga()
@@ -85,14 +85,13 @@ def cache_and_return_lga():
     Cache the list of unique local governments from fueling stations and return it.
     """
     all_stations = check_if_fueling_station_is_in_cache()
-
     # Check if all_stations is iterable, if not, return None.
     if all_stations is None:
         return None
 
     lga_set = {station.local_government for station in all_stations}  # Using set comprehension
 
-    cache.set(CACHE_KEY, list(lga_set), DAY_DURATION)
+    cache.set("all_lga", list(lga_set), DAY_DURATION)
     return list(lga_set)
 
 
