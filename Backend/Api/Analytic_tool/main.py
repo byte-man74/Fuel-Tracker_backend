@@ -5,6 +5,9 @@ from rest_framework.status import *
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 
+
+
+
 @api_view(['GET'])
 def get_all_the_stations (request):
     all_stations = check_if_fueling_station_is_in_cache()

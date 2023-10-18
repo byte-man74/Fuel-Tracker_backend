@@ -58,7 +58,7 @@ def find_nearby_fueling_stations(request):
 
 
 
-    all_stations = check_if_fueling_station_is_in_cache()
+    all_stations = check_distance_exist_in_cache()
     nearby_stations = process_station_fueling_by_distance (all_stations, user_position)
     serializer = FuelStationSerializer(nearby_stations, many=True)
     serialized_data = serializer.data

@@ -16,6 +16,24 @@ def check_if_fueling_station_is_in_cache ():
     return cache_object
 
 
+def check_distance_exist_in_cache ():
+    cache_object = cache.get("all_station_distance")
+
+    if cache_object is None:
+        location_instance = cache_and_return_fueling_station_distance()
+        return location_instance
+    return cache_object
+
+
+
+def cache_and_return_fueling_station_distance():
+    DAY_DURATION = 24 * 60 * 60 
+    fueling_station_distance = Fuel_Station_Position.objects.all()
+    cache.set('all_station_distance', fueling_station_distance, DAY_DURATION)
+
+    return fueling_station_distance
+
+
 
 def cache_and_return_fueling_stations():
     DAY_DURATION = 24 * 60 * 60 
