@@ -27,7 +27,7 @@ def check_distance_exist_in_cache ():
 
 
 def cache_and_return_fueling_station_distance():
-    DAY_DURATION = 24 * 60 * 60 
+    DAY_DURATION = 24 * 60 * 60
     fueling_station_distance = Fuel_Station_Position.objects.all()
     cache.set('all_station_distance', fueling_station_distance, DAY_DURATION)
 
@@ -36,7 +36,7 @@ def cache_and_return_fueling_station_distance():
 
 
 def cache_and_return_fueling_stations():
-    DAY_DURATION = 24 * 60 * 60 
+    DAY_DURATION = 24 * 60 * 60
     fueling_station = Fueling_station.objects.all()
     cache.set('all_fueling_station', fueling_station, DAY_DURATION)
 
@@ -56,6 +56,8 @@ def process_station_fueling_by_distance (all_stations, user_position):
         if distance <= 10.5:  # 500 meters in kilometers
             nearby_stations.append(station_position.station)
 
+    return nearby_stations
+
 
 
 
@@ -68,7 +70,7 @@ def check_if_state_cache_exist ():
 
 
 def cache_and_return_state():
-    DAY_DURATION = 24 * 60 * 60 
+    DAY_DURATION = 24 * 60 * 60
     all_stations = check_if_fueling_station_is_in_cache()
 
     # Check if all_stations is iterable, if not return an error response or handle it appropriately
@@ -95,7 +97,7 @@ def get_cached_local_governments():
 
     if lga_available is None:
         lga_available = cache_and_return_lga()
-    
+
     return lga_available
 
 def cache_and_return_lga():
@@ -136,11 +138,11 @@ def haversine(lat1, lon1, lat2, lon2):
 def add_fuel_station_to_location(serialized_data, user=None):
     fuel_stations_with_location = []
     has_voted = False
-    
+
 
     for data in serialized_data:
         station = Fueling_station.objects.get(id=data['id'])
-        
+
 
         #redis cache here too
         position = Fuel_Station_Position.objects.select_related('station').get(station=station.id)
@@ -175,4 +177,4 @@ def add_fuel_station_to_location(serialized_data, user=None):
 
         fuel_stations_with_location.append(fuel_station_with_location)
 
-    return fuel_station_with_location
+    return fuel_stations_with_location
