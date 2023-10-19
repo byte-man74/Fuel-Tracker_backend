@@ -40,8 +40,8 @@ def FuelStationAveragePrice(request):
         return Response({'avg_amount': average_price}, status=status.HTTP_200_OK)
     except Fuel_Station_Price.DoesNotExist:
         return Response({'error': 'Fuel station not found.'}, status=status.HTTP_404_NOT_FOUND)
-    
-    
+
+
 
 
 '''This api returns station based on the users longitude and latitude'''
@@ -59,9 +59,15 @@ def find_nearby_fueling_stations(request):
 
 
     all_stations = check_distance_exist_in_cache()
+    print(all_stations)
+
     nearby_stations = process_station_fueling_by_distance (all_stations, user_position)
+    print(nearby_stations)
+
+
     serializer = FuelStationSerializer(nearby_stations, many=True)
     serialized_data = serializer.data
+    print(serialized_data)
 
     fuel_stations_with_location = add_fuel_station_to_location(serialized_data, user)
 
@@ -92,8 +98,6 @@ def get_saved_stations (request):
 
 
 
-
-''''''
 class ViewFuelingStationInformation (APIView):
     #todo ......add a cache checker herre for performance
     def get(self, request, fuel_station_id):
@@ -125,7 +129,7 @@ class ViewFuelingStationInformation (APIView):
         }
 
         return Response(serialized_data)
-    
+
 
 
 #api to edit price of a fueling station
@@ -140,7 +144,7 @@ class EditPriceGetOptions(APIView):
             return Response(data={'cache_object': cache_object}, status=status.HTTP_200_OK)
         else:
             return Response(data={'details': 'no options'}, status=status.HTTP_204_NO_CONTENT)
-        
+
 
 
     def post(self, request, fuel_station_id):
@@ -159,7 +163,7 @@ class EditPriceGetOptions(APIView):
             check_cache_key_for_fuel_station_id_and_process_request(
                 data, fuel_station_id)
             return Response(status=status.HTTP_200_OK)
-        
+
 
         else:
             response = else_function(station_cache_key, data)
@@ -170,36 +174,11 @@ class EditPriceGetOptions(APIView):
 
 
 
-'''vote for a fuel price'''
-'''todo ---update here to wipe the vote data on price change'''
-'''API to agree on the availabile price'''
-class VoteFuelStationPriceView(APIView):
-    def get(self, request, price_id):
-        try:
-            price = Fuel_Station_Price.objects.get(id=price_id)
-        except Fuel_Station_Price.DoesNotExist:
-            return Response({'result': 'Price not found'}, status=404)
-
-        # Check if the user has already voted for this price
-        if request.user in price.get_voted_users():
-            return Response({'result': 'User has already voted for this price'}, status=200)
-
-        # Add the user to the list of voted users
-        price.voted_users.add(request.user)
-
-        # Increment the votes count (if needed)
-        price.votes += 1
-        price.save()
-
-        return Response({'result': 'Vote recorded successfully'}, status=200)
-
-
-
-# api to add comment on the fueling 
+# api to add comment on the fueling
 '''Comment on the API'''
 @api_view(['POST'])
 def create_comment(request, station_id):
-    station = Fueling_station.objects.get(id=station_id)
+    station = Fueling_station.objects.get(station=station_id)
     serializer = FuelStationCommentSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(user_email=request.user.email, station=station)
@@ -223,9 +202,9 @@ class UpdateTrafficRatingCountView(APIView):
 '''vote for a fuel price'''
 '''update here to wipe the vote data on the fuel price'''
 class VoteFuelStationPriceView(APIView):
-    def get(self, request, price_id):
+    def get(self, request, fuel_station_id):
         try:
-            price = Fuel_Station_Price.objects.get(id=price_id)
+            price = Fuel_Station_Price.objects.get(station=fuel_station_id)
         except Fuel_Station_Price.DoesNotExist:
             return Response({'result': 'Price not found'}, status=404)
 
