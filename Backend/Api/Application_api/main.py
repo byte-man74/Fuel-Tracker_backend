@@ -226,7 +226,7 @@ class UpdateVoteCountOpenCLoseView(APIView):
     def post(self, request, fuel_station_id):
         vote_type = request.data.get('vote_type')
 
-        # Trigger the Celery task asynchronously
+        # Trigger the Celery task asynchronouslyi
         update_vote_count(fuel_station_id, vote_type)
 
         return Response({'message': 'Vote count update task has been scheduled'}, status=status.HTTP_200_OK)
