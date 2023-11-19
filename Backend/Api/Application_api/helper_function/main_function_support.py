@@ -6,13 +6,12 @@ DAY_DURATION = 24 * 60 * 60
 CACHE_KEY = 'all_fueling_station'
 
 def check_if_fueling_station_is_in_cache ():
-    cache_object = cache.get("all_fueling_station")
-    print(cache_object)
-    print("excuse me")
+    cache_object = cache.get("all_fueling_station") 
 
     if cache_object is None:
         stations = cache_and_return_fueling_stations()
         return stations
+    
     return cache_object
 
 

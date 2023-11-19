@@ -4,13 +4,22 @@ from rest_framework.response import Response
 from rest_framework.status import *
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
-
+from django.db.models import Q
 
 
 
 @api_view(['GET'])
 def get_all_the_stations (request):
     all_stations = check_if_fueling_station_is_in_cache()
+
+
+    search_query = request.query_params.get('search', None)
+    if search_query:
+        all_stations = all_stations.filter(
+            Q(name__icontains=search_query)  
+            #| Q(state__icontains=search_query) |  # Search by state
+            # Q(local_government__icontains=search_query)  # Search by local government
+        )
 
     paginator = PageNumberPagination()
     paginator.page_size = 7
