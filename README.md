@@ -2,6 +2,8 @@
 
 This repository contains the backend implementation of a petrol price tracking application built using the Python Django framework. The backend system provides the necessary APIs and functionality to manage user authentication, fuel station data, and price tracking features.
 
+(NOTE: This a demo of the origjnal project and maximum security practices were not employed here. This repository is mainly just a representation of how the original product works and to also show whoever is viewing this that i know how to use Django)
+
 ## Features
 
 - User Authentication: Implement user registration, login, and account management functionality.
